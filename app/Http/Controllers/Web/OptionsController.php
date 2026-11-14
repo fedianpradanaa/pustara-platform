@@ -307,7 +307,7 @@ class OptionsController extends Controller
                 $id = json_decode(json_encode($id));
         } else {
             $id = [
-                'name' => 'PT. GINESIA DIGITAL INDONESIA',
+                'name' => 'PT. PUSTAKA NUSANTARA',
                 'country' => '',
                 'province' => '',
                 'province_name' => '',

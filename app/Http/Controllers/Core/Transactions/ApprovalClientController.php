@@ -128,7 +128,7 @@ class ApprovalClientController extends Controller
                 return file_exists(public_path($path . $value->logo_small)) ? $path . $value->logo_small : '';
             })
             ->editColumn('web_add', function ($value) {
-                return $value->web_add . '.pustakadigital.id';
+                return $value->web_add . '.pustakanusantara.id';
             })
             ->addIndexColumn()
             ->toJson();

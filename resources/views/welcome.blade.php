@@ -7,22 +7,22 @@
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-        <title>GIA e-Library</title>
-        <meta name="description" content="GIA e-Library adalah perpustakaan digital untuk menemukan dan menikmati koleksi bacaan dengan mudah." />
+        <title>Pustaka Nusantara</title>
+        <meta name="description" content="Pustaka Nusantara adalah perpustakaan digital untuk menemukan dan menikmati koleksi bacaan dengan mudah." />
         <link rel="icon" href="{{ asset('images/logo/favicon.svg') }}" type="image/svg+xml" />
 
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="GIA e-Library" />
-        <meta property="og:description" content="Perpustakaan digital, lebih dekat dan mudah diakses. Temukan dan nikmati koleksi bacaan melalui GIA e-Library." />
+        <meta property="og:title" content="Pustaka Nusantara" />
+        <meta property="og:description" content="Perpustakaan digital, lebih dekat dan mudah diakses. Temukan dan nikmati koleksi bacaan melalui Pustaka Nusantara." />
         <meta property="og:url" content="{{ url('/') }}" />
         <meta property="og:image" content="{{ asset('images/logo/favicon.svg') }}" />
         <meta property="og:image:type" content="image/svg+xml" />
         <meta property="og:image:width" content="3000" />
         <meta property="og:image:height" content="3000" />
-        <meta property="og:image:alt" content="Logo GIA e-Library" />
+        <meta property="og:image:alt" content="Logo Pustaka Nusantara" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="GIA e-Library" />
+        <meta name="twitter:title" content="Pustaka Nusantara" />
         <meta name="twitter:description" content="Perpustakaan digital, lebih dekat dan mudah diakses." />
         <meta name="twitter:image" content="{{ asset('images/logo/favicon.svg') }}" />
 

@@ -86,7 +86,7 @@
                 </tr>
                 <tr>
                     <td style='text-align: center; width: 5%;'>&#8226;</td>
-                    <td style='vertical-align: top; text-align: left;'><b>Nama:</b> PT. GINESIA DIGITAL INDONESIA</td>
+                    <td style='vertical-align: top; text-align: left;'><b>Nama:</b> PT. PUSTAKA NUSANTARA</td>
                 </tr>
                 <tr>
                     <td style='text-align: center; width: 5%;'>&#8226;</td>
@@ -481,7 +481,7 @@
                 </tr>
                 <tr>
                     <td style='text-align: center; width: 5%;'>&#8226;</td>
-                    <td style='vertical-align: top; text-align: left;'><b>Nama:</b> PT. GINESIA DIGITAL INDONESIA</td>
+                    <td style='vertical-align: top; text-align: left;'><b>Nama:</b> PT. PUSTAKA NUSANTARA</td>
                 </tr>
                 <tr>
                     <td style='text-align: center; width: 5%;'>&#8226;</td>
@@ -603,7 +603,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style='vertical-align: top;width: 100%;'>Pihak Kedua wajib mempromosikan dan menjual buku digital Platform Ginesia dengan cara yang profesional dan etis, khususnya kepada target pasar yang telah ditentukan.</td>
+                        <td style='vertical-align: top;width: 100%;'>Pihak Kedua wajib mempromosikan dan menjual buku digital Platform Pustaka Nusantara dengan cara yang profesional dan etis, khususnya kepada target pasar yang telah ditentukan.</td>
                     </tr>
                 </tbody>
             </table>
@@ -700,7 +700,7 @@
             <tr>
                 <td style='text-align: left; width: 20%;'><b>Nama Perusahaan</b></td>
                 <td style='text-align: left; width: 5%;'>:</td>
-                <td style='text-align: left;'>PT. GINESIA DIGITAL INDONESIA</td>
+                <td style='text-align: left;'>PT. PUSTAKA NUSANTARA</td>
             </tr>
             <tr>
                 <td style='text-align: left; width: 20%;'><b>Nama Direktur</b></td>
@@ -750,12 +750,12 @@
             <tr>
                 <td style='text-align: left; width: 20%;'><b>Website</b></td>
                 <td style='text-align: left; width: 5%;'>:</td>
-                <td style='text-align: left;'>www.pustakadigital.id</td>
+                <td style='text-align: left;'>www.pustakanusantara.id</td>
             </tr>
             <tr>
                 <td style='text-align: left; width: 20%;'><b>Email</b></td>
                 <td style='text-align: left; width: 5%;'>:</td>
-                <td style='text-align: left;'>info@pustakadigital.id</td>
+                <td style='text-align: left;'>info@pustakanusantara.id</td>
             </tr>
         </table>";
 
@@ -771,11 +771,11 @@
                 <div class='font-size-sm font-w50'>&nbsp;</div>
                 <div class='font-size-sm font-w50'>Dengan ini memberikan akses hak jual kepada :</div>
                 <div class='font-size-sm font-w50'>&nbsp;</div>
-                <div class='font-size-sm font-w50'>Nama Badan : PT. GINESIA DIGITAL INDONESIA</div>
+                <div class='font-size-sm font-w50'>Nama Badan : PT. PUSTAKA NUSANTARA</div>
                 <div class='font-size-sm font-w50'>&nbsp;</div>
                 <div class='font-size-sm font-w50'>Alamat : Jl. Glondong, Gg. Nakula, Pandeyan, Bangunharjo, Kec. Sewon, Kabupaten Bantul, Daerah Istimewa Yogyakarta 55188</div>
                 <div class='font-size-sm font-w50'>&nbsp;</div>
-                <div class='font-size-sm font-w50'>Sebagai pihak yang memiliki hak untuk menjual produk digital (buku elektronik) melalui platform milik PT. GINESIA DIGITAL INDONESIA.</div>
+                <div class='font-size-sm font-w50'>Sebagai pihak yang memiliki hak untuk menjual produk digital (buku elektronik) melalui platform milik PT. PUSTAKA NUSANTARA.</div>
                 <div class='font-size-sm font-w50'>&nbsp;</div>
                 <div class='font-size-sm font-w50'>Demikian Surat Akses Hak Jual ini dibuat untuk digunakan sebagaimana mestinya.</div>
                 <table class='table-sm font-size-sm' cellspacing='0' style='width: 100%; margin-top: 1rem!important'>
@@ -790,7 +790,7 @@
                             <td colspan='3' style='vertical-align: top;width: 100%;'>&nbsp;</td>
                         </tr>
                         <tr>
-                            <td class='text-center' style='vertical-align: top;width: 45%;'>PT. GINESIA DIGITAL INDONESIA</td>
+                            <td class='text-center' style='vertical-align: top;width: 45%;'>PT. PUSTAKA NUSANTARA</td>
                             <td class='text-center' style='vertical-align: top;width: 5%;'></td>
                             <td class='text-center' style='vertical-align: top;width: 45%;'>". $results->profile[0]->name ."</td>
                         </tr>
@@ -820,11 +820,11 @@
                 <div class='font-size-sm font-w50'>&nbsp;</div>
                 <div class='font-size-sm font-w50'>Dengan ini memberikan kuasa kepada :</div>
                 <div class='font-size-sm font-w50'>&nbsp;</div>
-                <div class='font-size-sm font-w50'>Nama Badan : PT. GINESIA DIGITAL INDONESIA</div>
+                <div class='font-size-sm font-w50'>Nama Badan : PT. PUSTAKA NUSANTARA</div>
                 <div class='font-size-sm font-w50'>&nbsp;</div>
                 <div class='font-size-sm font-w50'>Alamat : Jl. Glondong, Gg. Nakula, Pandeyan, Bangunharjo, Kec. Sewon, Kabupaten Bantul, Daerah Istimewa Yogyakarta 55188</div>
                 <div class='font-size-sm font-w50'>&nbsp;</div>
-                <div class='font-size-sm font-w50'>Untuk menandatangani Surat Dukungan kepada Pihak Ketiga sehubungan dengan syarat pengadaan buku di sebuah instansi, untuk seluruh buku kami yang diupload pada platform milik PT. GINESIA DIGITAL INDONESIA.</div>
+                <div class='font-size-sm font-w50'>Untuk menandatangani Surat Dukungan kepada Pihak Ketiga sehubungan dengan syarat pengadaan buku di sebuah instansi, untuk seluruh buku kami yang diupload pada platform milik PT. PUSTAKA NUSANTARA.</div>
                 <div class='font-size-sm font-w50'>&nbsp;</div>
                 <div class='font-size-sm font-w50'>Demikian surat kuasa ini dibuat untuk dapat digunakan sebagaimana mestinya.</div>
                 <table class='table-sm font-size-sm' cellspacing='0' style='width: 100%; margin-top: 1rem!important'>
@@ -928,7 +928,7 @@
 
         $html .= "
             <div class='page_break'></div>
-            <div class='font-size-xxs font-w50 text-center'><h2>PENDAFTARAN SUPPLIER GINESIA</h2></div>
+            <div class='font-size-xxs font-w50 text-center'><h2>PENDAFTARAN SUPPLIER PUSTAKA NUSANTARA</h2></div>
             <div class='font-size-sm font-w50'>Yang bertanda tangan dibawah ini, saya :</div>
             <div class='font-size-sm font-w50'>&nbsp;</div>
             <table class='table-sm font-size-sm' cellspacing='0' style='width: 100%;'>
