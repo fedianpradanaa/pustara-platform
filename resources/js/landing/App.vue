@@ -2,8 +2,8 @@
     <div class="min-h-screen bg-white text-slate-800">
         <header class="border-b border-slate-200">
             <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8" aria-label="Navigasi utama">
-                <a href="/" class="text-xl font-bold tracking-tight text-slate-900" aria-label="GIA e-Library beranda">
-                    GIA <span class="font-medium text-blue-700">e-Library</span>
+                <a href="/" class="flex items-center" aria-label="GIA e-Library beranda">
+                    <img src="/images/logo/logo.svg" alt="GIA e-Library" class="h-10 w-auto" />
                 </a>
 
                 <div class="flex items-center gap-3 sm:gap-8">

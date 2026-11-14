@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\PdfToImage\Pdf;
 
@@ -35,6 +36,22 @@ class UploadBooksController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function cover(string $location, string $filename): StreamedResponse
+    {
+        if (!in_array($location, ['temporary', 'published'], true) || basename($filename) !== $filename) {
+            abort(404);
+        }
+
+        $path = $location === 'published'
+            ? 'covers/'.$filename
+            : 'tmp/covers_tmp/'.$filename;
+        $disk = Storage::disk('public');
+
+        abort_unless($disk->exists($path), 404);
+
+        return $disk->response($path, $filename, [], 'inline');
     }
 
     /**
@@ -190,8 +207,26 @@ class UploadBooksController extends Controller
                 return Carbon::parse($value->createdate)->toDateTimeString();
             })
             ->addColumn('path_cover', function ($value) {
-                $path = $value->status != '1' && $value->status != '2' && $value->status != '5' ? 'storage/covers/' : 'storage/tmp/covers_tmp/';
-                return file_exists(public_path($path . $value->cover)) ? $path . $value->cover : '';
+                if (!$value->cover) {
+                    return '';
+                }
+
+                $locations = $value->status != '1' && $value->status != '2' && $value->status != '5'
+                    ? ['published', 'temporary']
+                    : ['temporary', 'published'];
+                $disk = Storage::disk('public');
+
+                foreach ($locations as $location) {
+                    $coverPath = $location === 'published'
+                        ? 'covers/'.$value->cover
+                        : 'tmp/covers_tmp/'.$value->cover;
+
+                    if ($disk->exists($coverPath)) {
+                        return route('encrypt-books-cover', ['location' => $location, 'filename' => $value->cover]);
+                    }
+                }
+
+                return '';
             })
             ->addColumn('select', function ($value) {
                 return $value->book_id .'|'. $value->status;
@@ -377,7 +412,9 @@ class UploadBooksController extends Controller
                         'category_id' => $value->category_id ?? '',
                         'publisher_id' => $value->publisher_id ?? '',
                         'book_format_id' => $value->book_format_id ?? '',
-                        'path_cover' => file_exists(public_path('/storage/tmp/covers_tmp/'.$value->cover)) ? '/storage/tmp/covers_tmp/'.$value->cover : ''
+                        'path_cover' => $value->cover && Storage::disk('public')->exists('tmp/covers_tmp/'.$value->cover)
+                            ? route('encrypt-books-cover', ['location' => 'temporary', 'filename' => $value->cover])
+                            : ''
                     ];
                 });
 
@@ -589,7 +626,9 @@ class UploadBooksController extends Controller
                                 'cover' => $value->cover ?? '',
                                 'age' => $value->age ?? '',
                                 'status' => $value->status ?? '',
-                                'path_cover' => file_exists(public_path('/storage/tmp/covers_tmp/'.$value->cover)) ? '/storage/tmp/covers_tmp/'.$value->cover : ''
+                                'path_cover' => $value->cover && Storage::disk('public')->exists('tmp/covers_tmp/'.$value->cover)
+                                    ? route('encrypt-books-cover', ['location' => 'temporary', 'filename' => $value->cover])
+                                    : ''
                             ];
                         });
                     }
@@ -630,7 +669,9 @@ class UploadBooksController extends Controller
                                 'category_id' => $value->category_id ?? '',
                                 'publisher_id' => $value->publisher_id ?? '',
                                 'book_format_id' => $value->book_format_id ?? '',
-                                'path_cover' => file_exists(public_path('/storage/tmp/covers_tmp/'.$value->cover)) ? '/storage/tmp/covers_tmp/'.$value->cover : ''
+                                'path_cover' => $value->cover && Storage::disk('public')->exists('tmp/covers_tmp/'.$value->cover)
+                                    ? route('encrypt-books-cover', ['location' => 'temporary', 'filename' => $value->cover])
+                                    : ''
                             ];
                         });
                     }

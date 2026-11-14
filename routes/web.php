@@ -50,6 +50,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::prefix('upload')->namespace('Upload')->group(function() {
                 Route::apiResource('encrypt-books', UploadBooksController::class);
+                Route::get('encrypt-books-cover/{location}/{filename}', [
+                    \App\Http\Controllers\Core\Upload\UploadBooksController::class,
+                    'cover'
+                ])->name('encrypt-books-cover');
 
                 Route::prefix('encrypt-books-excel')->group(function() {
                     Route::post('upload', 'UploadBooksController@uploadExcel');

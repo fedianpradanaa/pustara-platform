@@ -185,8 +185,26 @@ class ApprovalBooksController extends Controller
                 return Carbon::parse($value->createdate)->toDateTimeString();
             })
             ->addColumn('path_cover', function ($value) {
-                $path = $value->status != '1' && $value->status != '2' && $value->status != '5' ? 'storage/covers/' : 'storage/tmp/covers_tmp/';
-                return file_exists(public_path($path . $value->cover)) ? $path . $value->cover : public_path($path . $value->cover);
+                if (!$value->cover) {
+                    return '';
+                }
+
+                $locations = $value->status != '1' && $value->status != '2' && $value->status != '5'
+                    ? ['published', 'temporary']
+                    : ['temporary', 'published'];
+                $disk = Storage::disk('public');
+
+                foreach ($locations as $location) {
+                    $coverPath = $location === 'published'
+                        ? 'covers/'.$value->cover
+                        : 'tmp/covers_tmp/'.$value->cover;
+
+                    if ($disk->exists($coverPath)) {
+                        return route('encrypt-books-cover', ['location' => $location, 'filename' => $value->cover]);
+                    }
+                }
+
+                return '';
             })
             ->addColumn('select', function ($value) {
                 return $value->book_id .'|'. $value->status;
@@ -220,99 +238,131 @@ class ApprovalBooksController extends Controller
 
         $result['status'] = 200;
         $result['message'] = '';
+        $approve = false;
         try {
             DB::enableQueryLog();
 
             foreach (request()->request->all() as $key => $value) {
-                $draft = DB::table('tbook_draft as a')->sharedLock()
-                        ->select(
-                            'a.book_id as book_id',
-                            'a.supplier_id as supplier_id',
-                            'a.isbn as isbn',
-                            'a.eisbn as eisbn',
-                            'a.title as title',
-                            'a.writer as writer',
-                            'a.publisher_id as publisher_id',
-                            'a.size as size',
-                            'a.year as year',
-                            'a.volume as volume',
-                            'a.edition as edition',
-                            'a.page as page',
-                            'a.sinopsis as sinopsis',
-                            'a.sellprice as sellprice',
-                            'a.rentprice as rentprice',
-                            'a.retailprice as retailprice',
-                            'a.city as city',
-                            'a.category_id as category_id',
-                            'a.book_format_id as book_format_id',
-                            'a.filename as filename',
-                            'a.cover as cover',
-                            'a.age as age'
-                        )
-                        ->where('book_id', $value)
-                        ->first();
+                $movedFiles = [];
+                try {
+                    $approve = DB::transaction(function () use ($value, &$movedFiles) {
+                        $draft = DB::table('tbook_draft as a')
+                            ->select(
+                                'a.book_id as book_id',
+                                'a.supplier_id as supplier_id',
+                                'a.isbn as isbn',
+                                'a.eisbn as eisbn',
+                                'a.title as title',
+                                'a.writer as writer',
+                                'a.publisher_id as publisher_id',
+                                'a.size as size',
+                                'a.year as year',
+                                'a.volume as volume',
+                                'a.edition as edition',
+                                'a.page as page',
+                                'a.sinopsis as sinopsis',
+                                'a.sellprice as sellprice',
+                                'a.rentprice as rentprice',
+                                'a.retailprice as retailprice',
+                                'a.city as city',
+                                'a.category_id as category_id',
+                                'a.book_format_id as book_format_id',
+                                'a.filename as filename',
+                                'a.cover as cover',
+                                'a.age as age'
+                            )
+                            ->where('book_id', $value)
+                            ->lockForUpdate()
+                            ->first();
 
-                $insert = DB::table('tbook')
-                    ->updateOrInsert([
-                        'book_id' => $draft->book_id,
-                    ], [
-                        'supplier_id' => $draft->supplier_id,
-                        'isbn' => $draft->isbn,
-                        'eisbn' => $draft->eisbn,
-                        'title' => $draft->title,
-                        'writer' => $draft->writer,
-                        'publisher_id' => $draft->publisher_id,
-                        'size' => $draft->size,
-                        'year' => $draft->year,
-                        'volume' => $draft->volume,
-                        'edition' => $draft->edition,
-                        'page' => $draft->page,
-                        'sinopsis' => $draft->sinopsis,
-                        'sellprice' => $draft->sellprice,
-                        'rentprice' => $draft->rentprice,
-                        'retailprice' => $draft->retailprice,
-                        'city' => $draft->city,
-                        'category_id' => $draft->category_id,
-                        'book_format_id' => $draft->book_format_id,
-                        'filename' => $draft->filename,
-                        'cover' => $draft->cover,
-                        'age' => $draft->age,
-                        'createdate' => Carbon::now('Asia/Jakarta'),
-                        'createby' => auth()->user()->email,
-                        'updatedate' => Carbon::now('Asia/Jakarta'),
-                        'updateby' => auth()->user()->email,
-                    ]);
+                        if (!$draft) {
+                            throw new \RuntimeException('Book '.$value.' was not found.');
+                        }
 
-                if ($insert) {
-                    $approve = DB::table('tbook_draft')
-                    ->where('book_id', $value)
-                    ->update([
-                        'status' => '3',
-                        'updatedate' => Carbon::now('Asia/Jakarta'),
-                        'updateby' => auth()->user()->email
-                    ]);
+                        if (!$draft->filename || !$draft->cover) {
+                            throw new \RuntimeException('Book '.$value.' is missing its file or cover name.');
+                        }
 
-                    $data = DB::table('tbook_draft as a')->sharedLock()
-                        ->select(
-                            'a.filename as filename', 
-                            'a.cover as cover'
-                        )
-                        ->where('book_id', $value)
-                        ->first();
+                        $files = [
+                            [
+                                'disk' => 'local',
+                                'source' => 'tmp/books_tmp/'.$draft->filename,
+                                'destination' => 'books/'.$draft->filename,
+                                'label' => 'book file',
+                                'name' => $draft->filename,
+                            ],
+                            [
+                                'disk' => 'public',
+                                'source' => 'tmp/covers_tmp/'.$draft->cover,
+                                'destination' => 'covers/'.$draft->cover,
+                                'label' => 'book cover',
+                                'name' => $draft->cover,
+                            ],
+                        ];
 
-                    $scoverPath = public_path('storage/tmp/covers_tmp/'. $data->cover);
-                    $dcoverPath = public_path('storage/covers/'. $data->cover);
-                    
-                    if (File::exists($scoverPath)) {
-                        File::move($scoverPath, $dcoverPath);
+                        foreach ($files as $file) {
+                            $disk = Storage::disk($file['disk']);
+
+                            if ($disk->exists($file['source'])) {
+                                if (!$disk->move($file['source'], $file['destination'])) {
+                                    throw new \RuntimeException('Failed to move '.$file['label'].' '.$file['name'].'.');
+                                }
+
+                                $movedFiles[] = $file;
+                            } elseif (!$disk->exists($file['destination'])) {
+                                throw new \RuntimeException(
+                                    'The '.$file['label'].' for book '.$draft->book_id.' was not found.'
+                                );
+                            }
+                        }
+
+                        DB::table('tbook')->updateOrInsert([
+                            'book_id' => $draft->book_id,
+                        ], [
+                            'supplier_id' => $draft->supplier_id,
+                            'isbn' => $draft->isbn,
+                            'eisbn' => $draft->eisbn,
+                            'title' => $draft->title,
+                            'writer' => $draft->writer,
+                            'publisher_id' => $draft->publisher_id,
+                            'size' => $draft->size,
+                            'year' => $draft->year,
+                            'volume' => $draft->volume,
+                            'edition' => $draft->edition,
+                            'page' => $draft->page,
+                            'sinopsis' => $draft->sinopsis,
+                            'sellprice' => $draft->sellprice,
+                            'rentprice' => $draft->rentprice,
+                            'retailprice' => $draft->retailprice,
+                            'city' => $draft->city,
+                            'category_id' => $draft->category_id,
+                            'book_format_id' => $draft->book_format_id,
+                            'filename' => $draft->filename,
+                            'cover' => $draft->cover,
+                            'age' => $draft->age,
+                            'createdate' => Carbon::now('Asia/Jakarta'),
+                            'createby' => auth()->user()->email,
+                            'updatedate' => Carbon::now('Asia/Jakarta'),
+                            'updateby' => auth()->user()->email,
+                        ]);
+
+                        return DB::table('tbook_draft')
+                            ->where('book_id', $value)
+                            ->update([
+                                'status' => '3',
+                                'updatedate' => Carbon::now('Asia/Jakarta'),
+                                'updateby' => auth()->user()->email
+                            ]) > 0;
+                    });
+                } catch (Throwable $th) {
+                    foreach (array_reverse($movedFiles) as $file) {
+                        $disk = Storage::disk($file['disk']);
+                        if ($disk->exists($file['destination']) && !$disk->move($file['destination'], $file['source'])) {
+                            $logs->write('ERROR', 'Failed to restore '.$file['label'].' after approval failed.');
+                        }
                     }
 
-                    $sfilePath = 'tmp/books_tmp/'. $data->filename;
-                    $dfilePath = 'books/'. $data->filename;
-
-                    if (Storage::exists($sfilePath)) {
-                        Storage::move($sfilePath, $dfilePath);
-                    }
+                    throw $th;
                 }
             }
             
@@ -331,6 +381,7 @@ class ApprovalBooksController extends Controller
         } catch (Throwable $th) {
             $logs->write("ERROR", $th->getMessage());
 
+            $result['status'] = 500;
             $result['message'] = "Failed approve.<br>" . $th->getMessage();
         }
 

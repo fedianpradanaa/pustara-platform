@@ -31,11 +31,12 @@
 
                     <VeeForm ref="form" v-slot="{ handleSubmit, errors }" as="div">
                         <form class="mt-8 grid grid-cols-6 gap-4" @submit.prevent="handleSubmit($event, submit)">
+                            <p class="col-span-6 text-xs text-gray-500"><span class="font-semibold text-red-600">*</span> Wajib diisi</p>
                             <div class="col-span-6">
                                 <label for="name" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.name ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="name" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Nama Instansi" name="name" v-model="form.field.name" required autocomplete="name" autofocus />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Instansi</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Instansi <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="name" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -44,7 +45,7 @@
                                 <label for="name_apps" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.name_apps ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="name_apps" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Nama Aplikasi" name="name_apps" v-model="form.field.name_apps" required autocomplete="name_apps" autofocus />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Aplikasi</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Aplikasi <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="name_apps" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -54,20 +55,22 @@
                                     <label for="web_add" class="relative block h-10 flex-1 rounded-l-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.web_add ? 'border-red-500' : 'border-gray-200'">
                                         <Field type="text" id="web_add" class="peer h-full w-full rounded-l-md border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Alamat Website Perpustakaan" name="web_add" v-model="form.field.web_add" required autocomplete="web_add" autofocus />
 
-                                        <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Alamat Website Perpustakaan</span>
+                                        <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Alamat Website Perpustakaan <span class="text-red-600">*</span></span>
                                     </label>
 
-                                    <span class="inline-flex h-10 items-center rounded-r-md border border-l-0 bg-gray-200 px-3 text-sm text-gray-500 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400">.pustakadigital.id</span>
+                                    <span class="inline-flex h-10 items-center rounded-r-md border border-l-0 bg-gray-200 px-3 text-sm text-gray-500 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400">.pustaka-gia.id</span>
                                 </div>
                                 <ErrorMessage name="web_add" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
 
                             <div class="col-span-6">
-                                <Field as="textarea" id="address" class="mt-2 w-full rounded-lg align-top shadow-sm sm:text-sm" :class="errors.address ? 'border-red-500' : 'border-gray-200'" rows="3" placeholder="Masukkan alamat..." name="address" v-model="form.field.address" />
+                                <label for="address" class="mb-1 block text-sm font-medium text-gray-700">Alamat <span class="text-red-600">*</span></label>
+                                <Field as="textarea" id="address" class="w-full rounded-lg align-top shadow-sm sm:text-sm" :class="errors.address ? 'border-red-500' : 'border-gray-200'" rows="3" placeholder="Masukkan alamat..." name="address" v-model="form.field.address" />
                                 <ErrorMessage name="address" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
+                                <label for="country" class="mb-1 block text-sm font-medium text-gray-700">Negara <span class="text-red-600">*</span></label>
                                 <Field as="select" name="country" id="country" class="relative w-full rounded-md text-gray-700 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 sm:text-sm" :class="errors.country ? 'border-red-500' : 'border-gray-300'" v-model="form.field.country" @change="getProvinsi">
                                     <option value="">Silakan pilih Negara</option>
                                     <option value="IDN">Indonesia</option>
@@ -76,6 +79,7 @@
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
+                                <label for="province" class="mb-1 block text-sm font-medium text-gray-700">Provinsi <span class="text-red-600">*</span></label>
                                 <Field as="select" name="province" id="province" class="relative w-full rounded-md text-gray-700 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 sm:text-sm" :class="errors.province ? 'border-red-500' : 'border-gray-300'" v-model="form.field.province" @change="getKabupaten">
                                     <option value="">Silakan pilih Provinsi</option>
                                     <option v-for="(value, key) in option.province" :key="key" :value="value.id">{{ value.name }}</option>
@@ -84,6 +88,7 @@
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
+                                <label for="regency" class="mb-1 block text-sm font-medium text-gray-700">Kabupaten/Kota <span class="text-red-600">*</span></label>
                                 <Field as="select" name="regency" id="regency" class="relative w-full rounded-md text-gray-700 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 sm:text-sm" :class="errors.regency ? 'border-red-500' : 'border-gray-300'" v-model="form.field.regency" @change="getKecamatan">
                                     <option value="">Silakan pilih Kabupaten/Kota</option>
                                     <option v-for="(value, key) in option.regency" :key="key" :value="value.id">{{ value.name }}</option>
@@ -92,6 +97,7 @@
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
+                                <label for="district" class="mb-1 block text-sm font-medium text-gray-700">Kecamatan <span class="text-red-600">*</span></label>
                                 <Field as="select" name="district" id="district" class="relative w-full rounded-md text-gray-700 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 sm:text-sm" :class="errors.district ? 'border-red-500' : 'border-gray-300'" v-model="form.field.district" @change="getKelurahan">
                                     <option value="">Silakan pilih Kecamatan</option>
                                     <option v-for="(value, key) in option.district" :key="key" :value="value.id">{{ value.name }}</option>
@@ -100,6 +106,7 @@
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
+                                <label for="subdistrict" class="mb-1 block text-sm font-medium text-gray-700">Kelurahan <span class="text-red-600">*</span></label>
                                 <Field as="select" name="subdistrict" id="subdistrict" class="relative w-full rounded-md text-gray-700 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 sm:text-sm" :class="errors.subdistrict ? 'border-red-500' : 'border-gray-300'" v-model="form.field.subdistrict">
                                     <option value="">Silakan pilih Kelurahan</option>
                                     <option v-for="(value, key) in option.subdistrict" :key="key" :value="value.id">{{ value.name }}</option>
@@ -111,7 +118,7 @@
                                 <label for="postal_code" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.postal_code ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="postal_code" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Kode Pos" name="postal_code" v-model="form.field.postal_code" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Kode Pos</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Kode Pos <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="postal_code" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -120,7 +127,7 @@
                                 <label for="npwp" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.npwp ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="npwp" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="No. NPWP" name="npwp" v-model="form.field.npwp" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">No. NPWP</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">No. NPWP <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="npwp" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -129,7 +136,7 @@
                                 <label for="pers_responsible" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.pers_responsible ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="pers_responsible" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Nama Penanggung Jawab" name="pers_responsible" v-model="form.field.pers_responsible" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Penanggung Jawab</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Penanggung Jawab <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="pers_responsible" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -138,7 +145,7 @@
                                 <label for="pos_pers_responsible" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.pos_pers_responsible ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="pos_pers_responsible" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Jabatan Penanggung Jawab" name="pos_pers_responsible" v-model="form.field.pos_pers_responsible" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Jabatan Penanggung Jawab</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Jabatan Penanggung Jawab <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="pos_pers_responsible" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -147,7 +154,7 @@
                                 <label for="mou_sign_name" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.mou_sign_name ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="mou_sign_name" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Nama Penandatanganan MOU" name="mou_sign_name" v-model="form.field.mou_sign_name" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Penandatanganan MOU</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Penandatanganan MOU <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="mou_sign_name" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -156,7 +163,7 @@
                                 <label for="pos_sign_name" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.pos_sign_name ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="pos_sign_name" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Jabatan Penandatanganan MOU" name="pos_sign_name" v-model="form.field.pos_sign_name" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Jabatan Penandatanganan MOU</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Jabatan Penandatanganan MOU <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="pos_sign_name" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -165,7 +172,7 @@
                                 <label for="administrator_name" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.administrator_name ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="administrator_name" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Nama Pengelola (Admin)" name="administrator_name" v-model="form.field.administrator_name" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Pengelola (Admin)</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nama Pengelola (Admin) <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="administrator_name" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -174,12 +181,13 @@
                                 <label for="administrator_phone" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.administrator_phone ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="administrator_phone" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Nomor HP/WA (Admin)" name="administrator_phone" v-model="form.field.administrator_phone" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nomor HP/WA (Admin)</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Nomor HP/WA (Admin) <span class="text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="administrator_phone" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
+                                <label class="mb-1 block text-sm font-medium text-gray-700">Logo Besar <span class="text-red-600">*</span></label>
                                 <file-pond name="logo_big" ref="logo_big" label-idle="Upload Logo Besar disini..." v-bind:allow-multiple="false" accepted-file-types="image/png" maxFileSize="1000KB" v-on:init="handleFilePondInit" credits="false" v-on:updatefiles="getFile" />
                                 <ErrorMessage name="logo_big" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                                 <dt class="text-xs font-medium text-slate-500">Max. logo size: 1000 kb</dt>
@@ -188,6 +196,7 @@
                             </div>
 
                             <div class="col-span-6 sm:col-span-3">
+                                <label class="mb-1 block text-sm font-medium text-gray-700">Logo Kecil <span class="text-red-600">*</span></label>
                                 <file-pond name="logo_small" ref="logo_small" label-idle="Upload Logo Kecil disini..." v-bind:allow-multiple="false" accepted-file-types="image/png" maxFileSize="1000KB" v-on:init="handleFilePondInit" credits="false" v-on:updatefiles="getFileSmall" />
                                 <ErrorMessage name="logo_small" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                                 <dt class="text-xs font-medium text-slate-500">Max. logo size: 1000 kb</dt>
@@ -208,7 +217,7 @@
                                 <label for="agreement" class="flex gap-4">
                                     <input type="checkbox" id="agreement" name="agreement" v-model="form.field.agreement" class="size-5 rounded-md border-gray-200 bg-white shadow-sm" disabled />
 
-                                    <span class="text-sm text-red-700 underline"> Saya telah memahami dan menyetujui ketentuan dan persyaratan Pendaftaran Perpustakaan Digital Berbasis Website yang diajukan oleh pihak PT GINESIA DIGITAL INDONESIA. </span>
+                                    <span class="text-sm text-gray-700"> Saya telah memahami dan menyetujui ketentuan dan persyaratan Pendaftaran Perpustakaan Digital Berbasis Website yang diajukan oleh pihak GIA e-Library. <span class="font-semibold text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="agreement" class="mt-1 block text-sm text-red-600 dark:text-red-500" />
                             </div>
@@ -233,20 +242,21 @@
             <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
                 <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                        <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                            <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                                <div class="sm:flex sm:items-start">
-                                    <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                                        <ShieldExclamationIcon class="h-6 w-6 text-blue-600" aria-hidden="true" />
-                                    </div>
-                                    <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                        <DialogTitle as="h3" class="text-base font-semibold text-gray-900">SYARAT DAN KETENTUAN</DialogTitle>
-                                        <DialogTitle as="h3" class="text-base font-semibold text-gray-900">PENDAFTARAN PERPUSTAKAAN DIGITAL GINESIA</DialogTitle>
-                                        <div class="mt-2 h-[62vh] overflow-scroll p-1">
-                                            <div class="flow-root">
-                                                <dl class="my-1 text-sm">
+                        <DialogPanel class="relative flex max-h-[90vh] w-full max-w-2xl transform flex-col overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8">
+                            <div class="flex items-start gap-4 border-b border-gray-100 px-5 py-5 sm:px-7">
+                                <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-blue-50">
+                                    <ShieldExclamationIcon class="h-6 w-6 text-blue-600" aria-hidden="true" />
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Syarat dan Ketentuan</p>
+                                    <DialogTitle as="h3" class="mt-1 text-lg font-bold leading-snug text-gray-900 sm:text-xl">Pendaftaran Perpustakaan Digital GIA e-Library</DialogTitle>
+                                    <p class="mt-1 text-sm leading-5 text-gray-500">Mohon baca dan setujui ketentuan berikut untuk melanjutkan pendaftaran.</p>
+                                </div>
+                            </div>
+                            <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-7">
+                                <dl class="space-y-3 text-sm leading-6 [&>div]:rounded-lg [&>div]:bg-gray-50 [&>div]:px-4 [&>div]:py-3 [&>div]:ring-1 [&>div]:ring-gray-100 [&_dd]:text-gray-700">
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">1. Perpustakaan Digital GINESIA adalah platform aplikasi berbasis website.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">1. Perpustakaan Digital GIA e-Library adalah platform aplikasi berbasis website.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -254,7 +264,7 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">3. Nama Perpustakaan Digital pada Platform GINESIA akan menggunakan nama Lembaga Perpustakaan, sesuai dengan ketetapan dari pihak tersebut.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">3. Nama Perpustakaan Digital pada Platform GIA e-Library akan menggunakan nama Lembaga Perpustakaan, sesuai dengan ketetapan dari pihak tersebut.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -266,11 +276,11 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">6. Apabila dua Lembaga Perpustakaan pengguna Platform GINESIA melakukan merger (penggabungan), perpustakaan digital masing-masing dapat digabung dengan syarat pengisian surat pernyataan merger dan penambahan koleksi senilai minimal Rp. 3.000.000,-.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">6. Apabila dua Lembaga Perpustakaan pengguna Platform GIA e-Library melakukan merger (penggabungan), perpustakaan digital masing-masing dapat digabung dengan syarat pengisian surat pernyataan merger dan penambahan koleksi senilai minimal Rp. 3.000.000,-.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">7. Koleksi perpustakaan yang dibeli bersifat hak milik, namun PT. Ginesia Digital Indonesia tidak berkewajiban melakukan pembaruan atau perbaikan kecuali jika Pihak Lembaga Perpustakaan telah melakukan penambahan koleksi selama tahun berjalan.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">7. Koleksi perpustakaan yang dibeli bersifat hak milik, namun GIA e-Library tidak berkewajiban melakukan pembaruan atau perbaikan kecuali jika Pihak Lembaga Perpustakaan telah melakukan penambahan koleksi selama tahun berjalan.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -278,7 +288,7 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">9. PT. Ginesia Digital Indonesia menyediakan versi offline dengan ketentuan minimal pembelian koleksi perpustakaan, sesuai dengan ketentuan terpisah.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">9. GIA e-Library menyediakan versi offline dengan ketentuan minimal pembelian koleksi perpustakaan, sesuai dengan ketentuan terpisah.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -294,40 +304,37 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">13. Jika Distributor yang dipilih tidak memenuhi kewajiban pembayaran kepada PT. Ginesia Digital Indonesia, maka Pihak Ginesia berhak menurunkan koleksi terkait dari platform.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">13. Jika Distributor yang dipilih tidak memenuhi kewajiban pembayaran kepada GIA e-Library, maka Pihak GIA e-Library berhak menurunkan koleksi terkait dari platform.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">14. PT. Ginesia Digital Indonesia akan meningkatkan versi perpustakaan digital setiap tahun. Fitur-fitur tertentu hanya dapat diakses pada versi terbaru, dan Lembaga Perpustakaan harus melakukan pembelian koleksi untuk menikmati pembaruan otomatis.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">14. GIA e-Library akan meningkatkan versi perpustakaan digital setiap tahun. Fitur-fitur tertentu hanya dapat diakses pada versi terbaru, dan Lembaga Perpustakaan harus melakukan pembelian koleksi untuk menikmati pembaruan otomatis.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">15. Selain ebook, produk digital yang disediakan oleh PT. Ginesia Digital Indonesia di antaranya: ebook media interaktif, audiobook, videobook, video tutorial dan konten digital lainnya yang akan terus dikembangkan.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">15. Selain ebook, produk digital yang disediakan oleh GIA e-Library di antaranya: ebook media interaktif, audiobook, videobook, video tutorial dan konten digital lainnya yang akan terus dikembangkan.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">16. Pihak Lembaga Perpustakaan membayar Biaya Lisensi senilai Rp. 150.000,- dalam 1 tahun untuk tetap menikmati semua layanan fitur dan konten platform Ginesia, namun jika dalam 1 tahun ada pembelian koleksi minimal senilai Rp. 1.000.000,-, maka tidak ada biaya lisensi (gratis).</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">16. Pihak Lembaga Perpustakaan membayar Biaya Lisensi senilai Rp. 150.000,- dalam 1 tahun untuk tetap menikmati semua layanan fitur dan konten platform GIA e-Library, namun jika dalam 1 tahun ada pembelian koleksi minimal senilai Rp. 1.000.000,-, maka tidak ada biaya lisensi (gratis).</dd>
+                                                    </div>
+                                                    <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
+                                                        <dd class="text-gray-700 sm:col-span-2">17. Apabila selama 3 (tiga) tahun berturut-turut Pihak Lembaga Perpustakaan tidak melakukan pembelian koleksi e-book maupun pembayaran Biaya Lisensi, layanan perpustakaan digital bagi lembaga tersebut pada platform GIA e-Library akan dinonaktifkan sementara. Apabila kondisi tersebut berlanjut hingga mencapai 5 (lima) tahun berturut-turut, layanan perpustakaan digital tersebut akan dinonaktifkan secara permanen. Dalam hal penonaktifan permanen, koleksi e-book yang telah dibeli akan diserahkan kepada Pihak Lembaga Perpustakaan dalam bentuk file yang dapat diakses secara luring (offline), dengan akses terbatas hanya pada 1 (satu) komputer.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">Saya telah memahami dan menyetujui ketentuan dan persyaratan Pendaftaran Perpustakaan Digital Berbasis Website yang diajukan oleh pihak PT GINESIA DIGITAL INDONESIA.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">Saya telah memahami dan menyetujui ketentuan dan persyaratan Pendaftaran Perpustakaan Digital Berbasis Website yang diajukan oleh pihak GIA e-Library.</dd>
                                                     </div>
-                                                </dl>
-                                            </div>
-
-                                            <p class="text-sm text-gray-600">
-                                                <label for="agreement" class="flex gap-4">
-                                                    <input type="checkbox" id="agreement" name="agreement" v-model="form.field.agreement" class="size-5 rounded-md border-gray-200 bg-white shadow-sm" />
-
-                                                    <span class="text-sm text-red-700 underline"> Saya Setuju. </span>
-                                                </label>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                </dl>
                             </div>
-                            <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                                <button type="button" class="inline-flex w-full justify-center rounded-md bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 sm:ml-3 sm:w-auto" @click="open = false" :disabled="form.field.agreement ? false : true">Setuju</button>
+                            <div class="border-t border-gray-100 bg-white px-5 py-4 sm:px-7">
+                                <label for="agreement" class="flex cursor-pointer items-start gap-3">
+                                    <input type="checkbox" id="agreement" name="agreement" v-model="form.field.agreement" class="mt-0.5 size-5 flex-shrink-0 rounded-md border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500" />
+                                    <span class="text-sm leading-6 text-gray-700">Saya telah membaca dan menyetujui Syarat dan Ketentuan Pendaftaran Perpustakaan Digital GIA e-Library. <span class="font-semibold text-red-600">*</span></span>
+                                </label>
+                                <div class="mt-4 flex justify-end">
+                                    <button type="button" class="inline-flex w-full justify-center rounded-md bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto" @click="open = false" :disabled="!form.field.agreement">Saya Setuju</button>
+                                </div>
                             </div>
                         </DialogPanel>
                     </TransitionChild>
