@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-lg">
             <div class="flex items-center justify-center">
-                <img class="w-[50%]" src="images/logo/logo.svg" alt="logo" />
+                <img class="w-[50%]" src="images/logo/logo.png" alt="logo" />
             </div>
 
             <VeeForm ref="form" v-slot="{ handleSubmit }" as="div">

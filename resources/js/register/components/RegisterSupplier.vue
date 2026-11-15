@@ -7,7 +7,7 @@
                 <div class="hidden lg:relative lg:block lg:p-12">
                     <a class="block text-white" href="/">
                         <span class="sr-only">Home</span>
-                        <img class="w-40" src="images/logo/logo.svg" alt="logo" />
+                        <img class="w-40" src="images/logo/logo.png" alt="logo" />
                     </a>
 
                     <h2 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Formulir Pendaftaran</h2>
@@ -21,7 +21,7 @@
                     <div class="relative -mt-16 block lg:hidden">
                         <a class="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20" href="#">
                             <span class="sr-only">Home</span>
-                            <img src="images/logo/favicon.svg" alt="logo" />
+                            <img src="images/logo/favicon.png" alt="logo" />
                         </a>
 
                         <h1 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">Formulir Pendaftaran</h1>

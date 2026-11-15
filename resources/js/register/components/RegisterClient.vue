@@ -7,7 +7,7 @@
                 <div class="hidden lg:relative lg:block lg:p-12">
                     <a class="block text-white" href="/">
                         <span class="sr-only">Home</span>
-                        <img class="w-40" src="images/logo/logo.svg" alt="logo" />
+                        <img class="w-40" src="images/logo/logo.png" alt="logo" />
                     </a>
 
                     <h2 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Formulir Pendaftaran</h2>
@@ -21,7 +21,7 @@
                     <div class="relative -mt-16 block lg:hidden">
                         <a class="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20" href="#">
                             <span class="sr-only">Home</span>
-                            <img src="images/logo/favicon.svg" alt="logo" />
+                            <img src="images/logo/favicon.png" alt="logo" />
                         </a>
 
                         <h1 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">Formulir Pendaftaran</h1>
@@ -191,7 +191,7 @@
                                 <file-pond name="logo_big" ref="logo_big" label-idle="Upload Logo Besar disini..." v-bind:allow-multiple="false" accepted-file-types="image/png" maxFileSize="1000KB" v-on:init="handleFilePondInit" credits="false" v-on:updatefiles="getFile" />
                                 <ErrorMessage name="logo_big" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                                 <dt class="text-xs font-medium text-slate-500">Max. logo size: 1000 kb</dt>
-                                <img class="rounded-lg shadow-sm dark:shadow-gray-800" src="images/logo/logo.svg" alt="image description" />
+                                <img class="rounded-lg shadow-sm dark:shadow-gray-800" src="images/logo/logo.png" alt="image description" />
                                 <dt class="mt-2 text-xs font-medium text-slate-500">Contoh logo besar</dt>
                             </div>
 
@@ -200,7 +200,7 @@
                                 <file-pond name="logo_small" ref="logo_small" label-idle="Upload Logo Kecil disini..." v-bind:allow-multiple="false" accepted-file-types="image/png" maxFileSize="1000KB" v-on:init="handleFilePondInit" credits="false" v-on:updatefiles="getFileSmall" />
                                 <ErrorMessage name="logo_small" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                                 <dt class="text-xs font-medium text-slate-500">Max. logo size: 1000 kb</dt>
-                                <img class="h-[125px] w-[125px] rounded-lg shadow-sm dark:shadow-gray-800" src="images/logo/favicon.svg" alt="image description" />
+                                <img class="h-[125px] w-[125px] rounded-lg shadow-sm dark:shadow-gray-800" src="images/logo/favicon.png" alt="image description" />
                                 <dt class="mt-2 text-xs font-medium text-slate-500">Contoh logo kecil</dt>
                             </div>
 

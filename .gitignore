@@ -26,6 +26,7 @@ yarn-error.log
 /public/images/*
 !/public/images/logo/
 /public/images/logo/*
+!/public/images/logo/logo.png
+!/public/images/logo/favicon.png
 !/public/images/logo/apple-touch-icon.png
 !/public/images/logo/social-preview.png
-/public/images/

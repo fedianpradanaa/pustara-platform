@@ -37,7 +37,7 @@
 
     <div class="sidebar hide-sidebar absolute top-0 z-50 box-border h-screen max-h-screen w-[70%] bg-sidebar-color px-5 py-5 drop-shadow-md lg:w-[20%] lg:translate-x-0">
         <div class="logo mb-10 flex w-[10rem] justify-between">
-            <img src="images/logo/logo.svg" alt="logo" />
+            <img src="images/logo/logo.png" alt="logo" />
         </div>
 
         <div class="menus">

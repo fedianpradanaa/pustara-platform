@@ -3,7 +3,7 @@
         <header class="border-b border-slate-200">
             <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-8" aria-label="Navigasi utama">
                 <a href="/" class="flex items-center" aria-label="Pustaka Nusantara beranda">
-                    <img src="/images/logo/logo.svg" alt="Pustaka Nusantara" class="h-10 w-auto" />
+                    <img src="/images/logo/logo.png" alt="Pustaka Nusantara" class="h-10 w-auto" />
                 </a>
 
                 <div class="flex items-center gap-3 sm:gap-8">
