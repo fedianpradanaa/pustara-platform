@@ -28,3 +28,4 @@ yarn-error.log
 /public/images/logo/*
 !/public/images/logo/apple-touch-icon.png
 !/public/images/logo/social-preview.png
+/public/images/
