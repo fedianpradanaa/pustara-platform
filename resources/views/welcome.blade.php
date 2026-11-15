@@ -9,22 +9,22 @@
 
         <title>Pustaka Nusantara</title>
         <meta name="description" content="Pustaka Nusantara adalah perpustakaan digital untuk menemukan dan menikmati koleksi bacaan dengan mudah." />
-        <link rel="icon" href="{{ asset('images/logo/favicon.svg') }}" type="image/svg+xml" />
+        @include('layouts.favicon')
 
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Pustaka Nusantara" />
         <meta property="og:description" content="Perpustakaan digital, lebih dekat dan mudah diakses. Temukan dan nikmati koleksi bacaan melalui Pustaka Nusantara." />
         <meta property="og:url" content="{{ url('/') }}" />
-        <meta property="og:image" content="{{ asset('images/logo/favicon.svg') }}" />
-        <meta property="og:image:type" content="image/svg+xml" />
-        <meta property="og:image:width" content="3000" />
-        <meta property="og:image:height" content="3000" />
-        <meta property="og:image:alt" content="Logo Pustaka Nusantara" />
+        <meta property="og:image" content="{{ asset('images/logo/social-preview.png') }}" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Pustaka Nusantara, perpustakaan digital" />
 
-        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Pustaka Nusantara" />
         <meta name="twitter:description" content="Perpustakaan digital, lebih dekat dan mudah diakses." />
-        <meta name="twitter:image" content="{{ asset('images/logo/favicon.svg') }}" />
+        <meta name="twitter:image" content="{{ asset('images/logo/social-preview.png') }}" />
 
         <style>
             html {

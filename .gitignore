@@ -20,3 +20,11 @@ yarn-error.log
 /.vscode
 /.zed
 /public
+!/public/
+/public/*
+!/public/images/
+/public/images/*
+!/public/images/logo/
+/public/images/logo/*
+!/public/images/logo/apple-touch-icon.png
+!/public/images/logo/social-preview.png
