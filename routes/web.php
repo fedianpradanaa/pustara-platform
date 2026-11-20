@@ -96,6 +96,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::prefix('report')->namespace('Report')->group(function() {
                 Route::apiResource('category-books', CategoryBooksController::class);
 
+                Route::prefix('admin-data')->group(function() {
+                    Route::get('clients', 'AdminDataController@clients');
+                    Route::get('clients/export', 'AdminDataController@exportClients');
+                    Route::get('books', 'AdminDataController@books');
+                    Route::get('books/export', 'AdminDataController@exportBooks');
+                });
+
                 Route::apiResource('supplier-report', ReportSupplierController::class);
                 Route::prefix('supplier-report-excel')->group(function() {
                     Route::get('export-tpl', 'ReportSupplierController@exportTpl');

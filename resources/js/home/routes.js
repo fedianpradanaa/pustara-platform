@@ -60,6 +60,20 @@ const routes = [
         meta: { roles: [0] },
     },
     {
+        path: '/data-clients',
+        name: 'data_clients',
+        component: () => import(/* webpackChunkName: "data_clients" */ './components/AdminDataReport.vue'),
+        props: { reportType: 'client' },
+        meta: { roles: [0] },
+    },
+    {
+        path: '/data-books-report',
+        name: 'data_books_report',
+        component: () => import(/* webpackChunkName: "data_books_report" */ './components/AdminDataReport.vue'),
+        props: { reportType: 'books' },
+        meta: { roles: [0] },
+    },
+    {
         path: '/approval-client',
         name: 'approval_client',
         component: () => import(/* webpackChunkName: "approval_client" */ './components/ApprovalClient.vue'),

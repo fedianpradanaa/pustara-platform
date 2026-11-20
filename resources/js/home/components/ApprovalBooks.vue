@@ -55,104 +55,63 @@
 
                 <div class="tab-content mt-4 min-h-[23.75rem] flex-grow overflow-auto">
                     <div class="tab-panel" :class="form.data ? '' : 'hidden'">
-                        <div class="relative mb-1 flex gap-8">
-                            <details id="filterDetails" class="group [&_summary::-webkit-details-marker]:hidden">
-                                <summary class="flex cursor-pointer items-center gap-2 border-b border-gray-400 pb-1 text-gray-900 transition hover:border-gray-600" @click="hideFilterSts">
-                                    <span class="text-sm font-medium"> Filter Supplier </span>
-
-                                    <span class="transition group-open:-rotate-180">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                        </svg>
-                                    </span>
-                                </summary>
-
-                                <div class="z-40 group-open:absolute group-open:start-0 group-open:top-auto group-open:mt-2">
-                                    <div class="w-96 rounded border border-gray-200 bg-white">
-                                        <header class="flex items-center justify-between p-4">
-                                            <span class="text-sm text-gray-700"> {{ selected.length }} Selected </span>
-
-                                            <button type="button" class="text-sm text-gray-900 underline underline-offset-4" @click="resetFilter">Reset</button>
-                                        </header>
-
-                                        <ul class="h-[35vh] space-y-1 overflow-scroll border-t border-gray-200 p-4">
-                                            <li v-for="(supplier, key) in options.supplier" :key="key">
-                                                <label :for="supplier.id" class="inline-flex items-center gap-2">
-                                                    <input type="checkbox" :id="supplier.id" :name="supplier.id" :value="supplier.id" v-model="selected" class="size-5 rounded border-gray-300" />
-                                                    <span class="text-sm font-medium text-gray-700"> {{ supplier.name }} </span>
-                                                </label>
-                                            </li>
-                                        </ul>
-
-                                        <footer class="flex items-center justify-end border-t border-gray-200 p-4">
-                                            <button type="button" class="text-sm text-gray-900 underline underline-offset-4" @click="getData">Tampilkan</button>
-                                        </footer>
+                        <div class="mb-5 grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)]">
+                            <section class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <div>
+                                        <h2 class="text-sm font-semibold text-gray-900">Supplier</h2>
+                                        <p class="mt-1 text-xs text-gray-500">{{ selected.length }} dari {{ options.supplier.length }} dipilih</p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button type="button" class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50" @click="selectAllSuppliers">Pilih semua</button>
+                                        <button type="button" class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50" @click="clearSuppliers">Kosongkan</button>
                                     </div>
                                 </div>
-                            </details>
 
-                            <div class="relative mb-4 flex gap-8">
-                                <details id="filterDetailsSts" class="group [&_summary::-webkit-details-marker]:hidden">
-                                    <summary class="flex cursor-pointer items-center gap-2 border-b border-gray-400 pb-1 text-gray-900 transition hover:border-gray-600" @click="hideFilter">
-                                        <span class="text-sm font-medium"> Filter Status </span>
+                                <input v-model="supplierSearch" type="search" placeholder="Cari nama supplier..." aria-label="Cari supplier" class="mt-3 w-full rounded-md border-gray-300 py-2 text-sm shadow-sm focus:border-sky-500 focus:ring-sky-500" />
 
-                                        <span class="transition group-open:-rotate-180">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                            </svg>
-                                        </span>
-                                    </summary>
+                                <div class="mt-3 grid max-h-48 grid-cols-1 gap-1 overflow-y-auto rounded-lg border border-gray-100 p-2 sm:grid-cols-2">
+                                    <label v-for="supplier in filteredSuppliers" :key="supplier.id" class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-700 hover:bg-sky-50">
+                                        <input v-model="selected" type="checkbox" :value="supplier.id" class="size-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500" />
+                                        <span class="truncate">{{ supplier.name }}</span>
+                                    </label>
+                                    <p v-if="filteredSuppliers.length === 0" class="col-span-full px-2 py-3 text-center text-sm text-gray-500">Supplier tidak ditemukan.</p>
+                                </div>
+                            </section>
 
-                                    <div class="z-20 group-open:absolute group-open:start-0 group-open:top-auto group-open:mt-2">
-                                        <div class="w-96 rounded border border-gray-200 bg-white">
-                                            <header class="flex items-center justify-between p-4">
-                                                <span class="text-sm text-gray-700"> {{ selectedSts.length }} Selected </span>
-
-                                                <button type="button" class="text-sm text-gray-900 underline underline-offset-4" @click="resetFilterSts">Reset</button>
-                                            </header>
-
-                                            <ul class="h-[35vh] space-y-1 overflow-scroll border-t border-gray-200 p-4">
-                                                <li>
-                                                    <label class="inline-flex items-center gap-2">
-                                                        <input type="checkbox" id="review" name="review" value="2" v-model="selectedSts" class="size-5 rounded border-gray-300" />
-                                                        <span class="inline-flex items-center justify-center rounded-full bg-amber-100 px-2.5 py-0.5 text-amber-700">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ms-1 me-1.5 size-4">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                                                            </svg>
-                                                            <p class="whitespace-nowrap text-sm">Review</p>
-                                                        </span>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label class="inline-flex items-center gap-2">
-                                                        <input type="checkbox" id="publish" name="publish" value="3" v-model="selectedSts" class="size-5 rounded border-gray-300" />
-                                                        <span class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ms-1 me-1.5 size-4">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                                                            </svg>
-                                                            <p class="whitespace-nowrap text-sm">Publish</p>
-                                                        </span>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label class="inline-flex items-center gap-2">
-                                                        <input type="checkbox" id="reject" name="reject" value="5" v-model="selectedSts" class="size-5 rounded border-gray-300" />
-                                                        <span class="inline-flex items-center justify-center rounded-full bg-rose-100 px-2.5 py-0.5 text-rose-700">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ms-1 me-1.5 size-4">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                                                            </svg>
-                                                            <p class="whitespace-nowrap text-sm">Reject</p>
-                                                        </span>
-                                                    </label>
-                                                </li>
-                                            </ul>
-
-                                            <footer class="flex items-center justify-end border-t border-gray-200 p-4">
-                                                <button type="button" class="text-sm text-gray-900 underline underline-offset-4" @click="getData">Tampilkan</button>
-                                            </footer>
-                                        </div>
+                            <section class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <div>
+                                        <h2 class="text-sm font-semibold text-gray-900">Status buku</h2>
+                                        <p class="mt-1 text-xs text-gray-500">{{ selectedSts.length ? selectedSts.length + ' status dipilih' : 'Semua status' }}</p>
                                     </div>
-                                </details>
+                                    <button type="button" class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50" @click="selectAllStatuses">Pilih semua</button>
+                                </div>
+
+                                <div class="mt-3 space-y-2">
+                                    <label v-for="status in statusOptions" :key="status.value" class="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-100 px-3 py-2.5 hover:bg-gray-50">
+                                        <input type="checkbox" :checked="isStatusSelected(status.value)" @change="toggleStatus(status.value, $event.target.checked)" class="size-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500" />
+                                        <span class="rounded-full px-2.5 py-0.5 text-xs font-medium" :class="status.badgeClass">{{ status.label }}</span>
+                                    </label>
+                                </div>
+                            </section>
+
+                            <div class="sticky bottom-2 z-30 flex flex-wrap items-center justify-between gap-3 rounded-xl border-2 border-sky-300 bg-sky-50 px-4 py-4 shadow-xl lg:col-span-2">
+                                <div>
+                                    <p class="font-semibold text-sky-950">Langkah 2: tampilkan buku</p>
+                                    <p class="mt-1 text-sm text-sky-800">
+                                        {{ selected.length ? selected.length + ' supplier dipilih' : 'Pilih minimal satu supplier pada Langkah 1.' }}
+                                    </p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="button" class="rounded-md px-4 py-2 text-sm font-medium text-gray-600 hover:bg-white" @click="resetFilters">Reset filter</button>
+                                    <button v-if="selected.length > 0" type="button" class="inline-flex items-center gap-2 rounded-md bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" @click="getData">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.5h16.5m-16.5 5.25h16.5m-16.5 5.25h10.5m-10.5 5.25h7.5" />
+                                        </svg>
+                                        Tampilkan Buku
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -590,11 +549,17 @@ export default {
             ],
             data: [],
             searchQuery: '',
+            supplierSearch: '',
             rowsPerPage: 20,
             currentPage: 1,
             sortKey: '',
             sortAsc: true,
             perPageOptions: [20, 30, 40, 50],
+            statusOptions: [
+                { value: '2', label: 'Review', badgeClass: 'bg-amber-100 text-amber-700' },
+                { value: '3', label: 'Publish', badgeClass: 'bg-emerald-100 text-emerald-700' },
+                { value: '5', label: 'Reject', badgeClass: 'bg-rose-100 text-rose-700' },
+            ],
 
             options: {
                 supplier: [],
@@ -638,20 +603,50 @@ export default {
     },
 
     methods: {
-        hideFilter() {
-            document.getElementById('filterDetails').removeAttribute('open')
+        selectAllSuppliers() {
+            this.selected = this.options.supplier.map((supplier) => supplier.id)
         },
 
-        resetFilter() {
+        clearSuppliers() {
             this.selected = []
         },
 
-        hideFilterSts() {
-            document.getElementById('filterDetailsSts').removeAttribute('open')
+        selectAllStatuses() {
+            this.selectedSts = []
         },
 
-        resetFilterSts() {
-            this.selectedSts = []
+        isStatusSelected(status) {
+            return this.selectedSts.length === 0 || this.selectedSts.includes(status)
+        },
+
+        toggleStatus(status, checked) {
+            const allStatuses = this.statusOptions.map((option) => option.value)
+
+            if (this.selectedSts.length === 0) {
+                this.selectedSts = allStatuses
+            }
+
+            if (checked && !this.selectedSts.includes(status)) {
+                this.selectedSts.push(status)
+            } else if (!checked) {
+                if (this.selectedSts.length === 1) {
+                    return
+                }
+
+                this.selectedSts = this.selectedSts.filter((selectedStatus) => selectedStatus !== status)
+            }
+
+            if (this.selectedSts.length === allStatuses.length) {
+                this.selectedSts = []
+            }
+        },
+
+        resetFilters() {
+            this.supplierSearch = ''
+            this.selectAllSuppliers()
+            this.selectAllStatuses()
+            this.currentPage = 1
+            this.getData()
         },
 
         toggleSelectAll() {
@@ -680,8 +675,8 @@ export default {
         getData() {
             let loader = this.$loading.show()
 
-            this.hideFilter()
-            this.hideFilterSts()
+            this.currentPage = 1
+            this.selectedRows = []
 
             if (this.selected.length > 0) {
                 window.axios
@@ -984,6 +979,12 @@ export default {
     },
 
     computed: {
+        filteredSuppliers() {
+            const query = this.supplierSearch.trim().toLowerCase()
+
+            return this.options.supplier.filter((supplier) => String(supplier.name || '').toLowerCase().includes(query))
+        },
+
         isAllSelected() {
             return this.paginatedData.length > 0 && this.paginatedData.every((row) => this.selectedRows.includes(row.book_id))
         },

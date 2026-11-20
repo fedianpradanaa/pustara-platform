@@ -40,13 +40,15 @@ class UploadBooksController extends Controller
 
     public function cover(string $location, string $filename): StreamedResponse
     {
-        if (!in_array($location, ['temporary', 'published'], true) || basename($filename) !== $filename) {
+        if (!in_array($location, ['temporary', 'published', 'draft'], true) || basename($filename) !== $filename) {
             abort(404);
         }
 
-        $path = $location === 'published'
-            ? 'covers/'.$filename
-            : 'tmp/covers_tmp/'.$filename;
+        $path = [
+            'published' => 'covers/'.$filename,
+            'temporary' => 'tmp/covers_tmp/'.$filename,
+            'draft' => 'covers_draft/'.$filename,
+        ][$location];
         $disk = Storage::disk('public');
 
         abort_unless($disk->exists($path), 404);

@@ -79,7 +79,7 @@
                                                 <template v-if="paginatedData.length > 0">
                                                     <tr v-for="row in paginatedData" :key="row.client_id" class="even:bg-gray-50 hover:bg-gray-100">
                                                         <td class="whitespace-nowrap border-b border-gray-200 px-4 py-2">
-                                                            <input v-if="row.flag_appr == (this.userRole == 0 ? 'P' : 'N')" type="checkbox" v-model="selectedRows" :value="row.client_id" class="size-5 rounded border-gray-300" />
+                                                            <input v-if="canApprove(row)" type="checkbox" v-model="selectedRows" :value="row.client_id" class="size-5 rounded border-gray-300" />
                                                         </td>
                                                         <td v-for="header in headers" :key="header.key" class="whitespace-nowrap border-b border-gray-200 px-4 py-2">
                                                             <template v-if="header.key == 'flag_appr'">
@@ -291,12 +291,17 @@ export default {
     },
 
     methods: {
+        canApprove(row) {
+            return this.userRole == 0
+                ? ['N', 'P'].includes(row.flag_appr)
+                : this.userRole == 2 && row.flag_appr === 'N'
+        },
+
         toggleSelectAll() {
             if (this.isAllSelected) {
                 this.selectedRows = []
             } else {
-                let flagRole = this.userRole == 0 ? 'P' : 'N'
-                this.selectedRows = this.paginatedData.filter((row) => row.flag_appr === flagRole).map((row) => row.client_id)
+                this.selectedRows = this.paginatedData.filter((row) => this.canApprove(row)).map((row) => row.client_id)
             }
         },
 
@@ -427,7 +432,8 @@ export default {
 
     computed: {
         isAllSelected() {
-            return this.paginatedData.length > 0 && this.paginatedData.every((row) => this.selectedRows.includes(row.client_id))
+            const approvableRows = this.paginatedData.filter((row) => this.canApprove(row))
+            return approvableRows.length > 0 && approvableRows.every((row) => this.selectedRows.includes(row.client_id))
         },
 
         filteredData() {
