@@ -1,68 +1,11 @@
 <template>
-    <section class="bg-white">
-        <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
-            <section class="relative flex h-32 items-start bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-4">
-                <img alt="" src="https://images.unsplash.com/photo-1617195737496-bc30194e3a19?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" class="absolute inset-0 h-full w-full object-cover opacity-80" />
-
-                <div class="hidden lg:relative lg:block lg:p-12">
-                    <a class="block text-white" href="/">
-                        <span class="sr-only">Home</span>
-                        <img class="w-40" src="images/logo/logo.png" alt="logo" />
-                    </a>
-
-                    <h2 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Formulir Pendaftaran</h2>
-
-                    <p class="mt-4 font-bold leading-relaxed text-white/90">Supplier</p>
-                </div>
-            </section>
-
-            <main class="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-8">
-                <div class="max-w-xl lg:max-w-3xl">
-                    <div class="relative -mt-16 block lg:hidden">
-                        <a class="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20" href="#">
-                            <span class="sr-only">Home</span>
-                            <img src="images/logo/favicon.png" alt="logo" />
-                        </a>
-
-                        <h1 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">Formulir Pendaftaran</h1>
-
-                        <p class="mt-4 leading-relaxed text-gray-500"></p>
-                    </div>
-
-                    <div class="mt-8 grid grid-cols-6 gap-4">
-                        <div class="col-span-6">
-                            <a href="#" class="relative block overflow-hidden rounded-lg border border-gray-100 p-4 sm:p-6 lg:p-8">
-                                <div class="sm:flex sm:justify-between sm:gap-4">
-                                    <div class="flex justify-between gap-4">
-                                        <div>
-                                            <h3 class="text-lg font-bold text-gray-900 sm:text-xl">Manual Guide Daftar & Upload Buku Supplier</h3>
-                                        </div>
-
-                                        <div>
-                                            <div class="block sm:hidden md:hidden lg:hidden">
-                                                <button class="inline-block rounded border border-sky-500 bg-sky-500 px-3 py-1 text-sm font-medium text-white hover:bg-transparent hover:text-sky-500 focus:outline-none focus:ring active:text-sky-500" @click="downloadFile">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="hidden sm:block">
-                                        <button class="group relative inline-flex items-center overflow-hidden rounded bg-sky-500 px-8 py-2 text-white focus:outline-none focus:ring active:bg-sky-500" @click="downloadFile">
-                                            <span class="absolute -start-full transition-all group-hover:start-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                                </svg>
-                                            </span>
-
-                                            <span class="text-sm font-semibold transition-all group-hover:ms-4"> Download Guide </span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </a>
+    <RegistrationLayout title="Supplier">
+                    <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-blue-100 bg-blue-50 p-4">
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-900">Panduan supplier</h2>
+                            <p class="mt-1 text-sm text-slate-600">Panduan pendaftaran dan upload buku.</p>
                         </div>
+                        <button type="button" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700" @click="downloadFile">Unduh panduan</button>
                     </div>
 
                     <VeeForm ref="form" v-slot="{ handleSubmit, errors }" as="div">
@@ -127,10 +70,11 @@
 
                                 <div class="col-span-6">
                                     <label for="email" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.email ? 'border-red-500' : 'border-gray-200'">
-                                        <Field type="email" id="email" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Email" name="email" v-model="form.field.email" required autocomplete="email" autofocus />
+                                        <Field type="email" id="email" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Email" name="email" v-model="form.field.email" required autocomplete="email" aria-describedby="email-help" />
 
                                         <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Email</span>
                                     </label>
+                                    <p id="email-help" class="mt-2 text-xs leading-5 text-slate-600">Gunakan alamat email aktif untuk menerima pemberitahuan pendaftaran dan status pengajuan.</p>
                                     <ErrorMessage name="email" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                                 </div>
 
@@ -481,10 +425,7 @@
                             </template>
                         </form>
                     </VeeForm>
-                </div>
-            </main>
-        </div>
-    </section>
+    </RegistrationLayout>
 
     <!-- modal -->
     <TransitionRoot as="template" :show="open">
@@ -538,12 +479,14 @@
 </template>
 
 <script>
+import RegistrationLayout from './RegistrationLayout.vue'
 import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 export default {
     components: {
+        RegistrationLayout,
         VeeForm,
         Field,
         ErrorMessage,
@@ -754,7 +697,9 @@ export default {
                 loader.hide()
             } catch (e) {
                 loader.hide()
-                this.$refs.form.setErrors(e.response.data.errors)
+                if (e.response && e.response.data && e.response.data.errors) {
+                    this.$refs.form.setErrors(e.response.data.errors)
+                }
 
                 if (e.response && e.response.data && e.response.data.message) {
                     this.$notyf.error(e.response.data.message)

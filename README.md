@@ -7,6 +7,42 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Email pendaftaran
+
+Setiap deployment Pustaka Nusantara dan GIA e-Library menggunakan database, konfigurasi `.env`, dan worker antrean masing-masing. Jalankan migrasi pada **masing-masing database** sebelum menggunakan formulir atau menu approval:
+
+```bash
+php artisan migrate --force
+```
+
+Di `.env` deployment terkait, isi SMTP dengan akun email bisnis yang sesuai. Contoh untuk Hostinger Email (bukan Titan atau Google Workspace):
+
+```dotenv
+APP_BRAND=pustara
+APP_URL=https://domain-platform-anda
+QUEUE_CONNECTION=database
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.hostinger.com
+MAIL_PORT=465
+MAIL_ENCRYPTION=ssl
+MAIL_USERNAME=info@pustakanusantara.id
+MAIL_PASSWORD="isi-password-email-di-server"
+MAIL_FROM_ADDRESS=info@pustakanusantara.id
+MAIL_FROM_NAME="Pustaka Nusantara"
+```
+
+Untuk GIA, gunakan `APP_BRAND=gia`, URL platform GIA, akun `info@pustaka-gia.id`, dan `MAIL_FROM_NAME="GIA e-Library"`. Isi password secara pribadi di server, jangan simpan di Git. Pastikan `MAIL_URL` tidak menimpa pengaturan SMTP ini. Jika memakai jenis layanan lain, periksa parameter di panel penyedia. Hostinger menyediakan detail di **Emails > Manage > Connect Apps & Devices**; lihat [petunjuk Hostinger](https://www.hostinger.com/support/1575756-how-to-get-email-account-configuration-details-for-hostinger-email/).
+
+Setelah mengubah `.env`, jalankan `php artisan config:cache` dan `php artisan queue:restart`. Konfigurasikan process manager server untuk menjalankan dan menjaga worker di direktori **setiap deployment**:
+
+```bash
+php artisan queue:work database --sleep=3 --tries=5 --timeout=60
+```
+
+Antrean email memakai koneksi database aplikasi dan tabel `jobs`. Tanpa worker, email tidak akan terkirim. Email yang gagal dicoba ulang hingga lima kali; periksa `php artisan queue:failed` dan gunakan `php artisan queue:retry <id>` setelah masalah SMTP diperbaiki. Email verifikasi supplier/distributor juga menggunakan antrean. `APP_URL` harus benar agar tautan verifikasi mengarah ke platform yang sesuai.
+
+Pendaftaran client lama tanpa email tetap dapat diproses, tetapi admin menerima peringatan bahwa email status tidak dikirim. Pemberitahuan pendaftaran client baru dikirim setelah data tersimpan; persetujuan awal oleh distributor belum merupakan persetujuan akhir admin.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

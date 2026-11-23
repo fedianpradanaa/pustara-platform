@@ -1,36 +1,5 @@
 <template>
-    <section class="bg-white">
-        <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
-            <section class="relative flex h-32 items-start bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-4">
-                <img alt="" src="https://images.unsplash.com/photo-1617195737496-bc30194e3a19?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" class="absolute inset-0 h-full w-full object-cover opacity-80" />
-
-                <div class="hidden lg:relative lg:block lg:p-12">
-                    <a class="block text-white" href="/">
-                        <span class="sr-only">Home</span>
-                        <img v-if="$brand.logo_path" class="w-40" :src="'/' + $brand.logo_path" :alt="$brand.name" />
-                        <span v-else class="text-xl font-bold text-white">{{ $brand.name }}</span>
-                    </a>
-
-                    <h2 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Formulir Pendaftaran</h2>
-
-                    <p class="mt-4 font-bold leading-relaxed text-white/90">Client</p>
-                </div>
-            </section>
-
-            <main class="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-8">
-                <div class="max-w-xl lg:max-w-3xl">
-                    <div class="relative -mt-16 block lg:hidden">
-                        <a class="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20" href="#">
-                            <span class="sr-only">Home</span>
-                            <img v-if="$brand.favicon_path" :src="'/' + $brand.favicon_path" :alt="$brand.name" />
-                            <span v-else class="text-sm font-bold">{{ $brand.name }}</span>
-                        </a>
-
-                        <h1 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">Formulir Pendaftaran</h1>
-
-                        <p class="mt-4 leading-relaxed text-gray-500"></p>
-                    </div>
-
+    <RegistrationLayout title="Client">
                     <VeeForm ref="form" v-slot="{ handleSubmit, errors }" as="div">
                         <form class="mt-8 grid grid-cols-6 gap-4" @submit.prevent="handleSubmit($event, submit)">
                             <p class="col-span-6 text-xs text-gray-500"><span class="font-semibold text-red-600">*</span> Wajib diisi</p>
@@ -44,6 +13,15 @@
                             </div>
 
                             <div class="col-span-6">
+                                <label for="email" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.email ? 'border-red-500' : 'border-gray-200'">
+                                    <Field type="email" id="email" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Email" name="email" v-model="form.field.email" required autocomplete="email" aria-describedby="email-help" />
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700">Email <span class="text-red-600">*</span></span>
+                                </label>
+                                <p id="email-help" class="mt-2 text-xs leading-5 text-slate-600">Gunakan alamat email aktif untuk menerima pemberitahuan pendaftaran dan status pengajuan.</p>
+                                <ErrorMessage name="email" class="mt-1 block text-xs text-red-600" />
+                            </div>
+
+                            <div class="col-span-6">
                                 <label for="name_apps" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.name_apps ? 'border-red-500' : 'border-gray-200'">
                                     <Field type="text" id="name_apps" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Nama Aplikasi" name="name_apps" v-model="form.field.name_apps" required autocomplete="name_apps" autofocus />
 
@@ -53,15 +31,12 @@
                             </div>
 
                             <div class="col-span-6">
-                                <div class="flex items-center">
-                                    <label for="web_add" class="relative block h-10 flex-1 rounded-l-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.web_add ? 'border-red-500' : 'border-gray-200'">
-                                        <Field type="text" id="web_add" class="peer h-full w-full rounded-l-md border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Alamat Website Perpustakaan" name="web_add" v-model="form.field.web_add" required autocomplete="web_add" autofocus />
-
-                                        <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Alamat Website Perpustakaan <span class="text-red-600">*</span></span>
-                                    </label>
-
-                                    <span v-if="$brand.website_suffix" class="inline-flex h-10 items-center rounded-r-md border border-l-0 bg-gray-200 px-3 text-sm text-gray-500 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400">{{ $brand.website_suffix }}</span>
+                                <label for="web_add" class="mb-1 block text-sm font-medium text-gray-700">Alamat Website Perpustakaan <span class="text-red-600">*</span></label>
+                                <div class="flex min-w-0 items-stretch">
+                                    <Field type="text" id="web_add" class="min-w-0 flex-1 rounded-l-xl border-gray-300 text-sm focus:border-blue-600 focus:ring-blue-600" :class="errors.web_add ? 'border-red-500' : 'border-gray-300'" placeholder="nama-perpustakaan" name="web_add" v-model="form.field.web_add" required aria-describedby="website-help" />
+                                    <span class="inline-flex items-center rounded-r-xl border border-l-0 border-gray-300 bg-slate-50 px-2 text-xs text-slate-600 sm:px-3 sm:text-sm">{{ $brand.website_suffix }}</span>
                                 </div>
+                                <p id="website-help" class="mt-2 text-xs text-slate-500">Masukkan nama subdomain perpustakaan Anda.</p>
                                 <ErrorMessage name="web_add" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
 
@@ -193,7 +168,7 @@
                                 <file-pond name="logo_big" ref="logo_big" label-idle="Upload Logo Besar disini..." v-bind:allow-multiple="false" accepted-file-types="image/png" maxFileSize="1000KB" v-on:init="handleFilePondInit" credits="false" v-on:updatefiles="getFile" />
                                 <ErrorMessage name="logo_big" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                                 <dt class="text-xs font-medium text-slate-500">Max. logo size: 1000 kb</dt>
-                                <img class="rounded-lg shadow-sm dark:shadow-gray-800" src="images/logo/logo.png" alt="image description" />
+                                <img v-if="$brand.logo_path" class="rounded-lg shadow-sm dark:shadow-gray-800" :src="'/' + $brand.logo_path" :alt="$brand.name" />
                                 <dt class="mt-2 text-xs font-medium text-slate-500">Contoh logo besar</dt>
                             </div>
 
@@ -202,16 +177,17 @@
                                 <file-pond name="logo_small" ref="logo_small" label-idle="Upload Logo Kecil disini..." v-bind:allow-multiple="false" accepted-file-types="image/png" maxFileSize="1000KB" v-on:init="handleFilePondInit" credits="false" v-on:updatefiles="getFileSmall" />
                                 <ErrorMessage name="logo_small" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                                 <dt class="text-xs font-medium text-slate-500">Max. logo size: 1000 kb</dt>
-                                <img class="h-[125px] w-[125px] rounded-lg shadow-sm dark:shadow-gray-800" src="images/logo/favicon.png" alt="image description" />
+                                <img v-if="$brand.favicon_path" class="h-[125px] w-[125px] rounded-lg shadow-sm dark:shadow-gray-800" :src="'/' + $brand.favicon_path" :alt="$brand.name" />
                                 <dt class="mt-2 text-xs font-medium text-slate-500">Contoh logo kecil</dt>
                             </div>
 
                             <div class="col-span-6">
                                 <label for="noref" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.noref ? 'border-red-500' : 'border-gray-200'">
-                                    <Field type="text" id="noref" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Kode Referensi" name="noref" v-model="form.field.noref" />
+                                    <Field type="text" id="noref" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Kode Referensi" name="noref" v-model="form.field.noref" required aria-describedby="reference-help" />
 
-                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Kode Referensi</span>
+                                    <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Kode Referensi <span class="text-red-600">*</span></span>
                                 </label>
+                                <p id="reference-help" class="mt-2 text-xs leading-5 text-slate-600">Kode referensi diberikan oleh distributor yang menawarkan aplikasi perpustakaan digital. Jika belum mengetahui kode Anda, silakan hubungi distributor atau admin {{ $brand.name }} untuk mendapatkannya.</p>
                                 <ErrorMessage name="noref" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
 
@@ -229,10 +205,7 @@
                             </div>
                         </form>
                     </VeeForm>
-                </div>
-            </main>
-        </div>
-    </section>
+    </RegistrationLayout>
 
     <!-- modal -->
     <TransitionRoot as="template" :show="open">
@@ -381,6 +354,7 @@
 </template>
 
 <script>
+import RegistrationLayout from './RegistrationLayout.vue'
 import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { ShieldExclamationIcon } from '@heroicons/vue/24/outline'
@@ -388,6 +362,7 @@ import { CheckBadgeIcon } from '@heroicons/vue/24/outline'
 
 export default {
     components: {
+        RegistrationLayout,
         VeeForm,
         Field,
         ErrorMessage,
@@ -416,6 +391,7 @@ export default {
             form: {
                 field: {
                     name: '',
+                    email: '',
                     name_apps: '',
                     web_add: '',
                     address: '',
@@ -448,6 +424,7 @@ export default {
     methods: {
         clearForm() {
             this.form.field.name = ''
+            this.form.field.email = ''
             this.form.field.name_apps = ''
             this.form.field.web_add = ''
             this.form.field.address = ''
@@ -599,7 +576,9 @@ export default {
                 this.$notyf.success(response.data.message || 'Register successful!')
             } catch (e) {
                 loader.hide()
-                this.$refs.form.setErrors(e.response.data.errors)
+                if (e.response && e.response.data && e.response.data.errors) {
+                    this.$refs.form.setErrors(e.response.data.errors)
+                }
 
                 if (e.response && e.response.data && e.response.data.message) {
                     this.$notyf.error(e.response.data.message)

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Logs;
 use App\Http\Controllers\Controller;
+use App\Services\RegistrationMailQueue;
 use Carbon\Carbon;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,6 +13,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class RegisterClientController extends Controller
@@ -62,10 +64,21 @@ class RegisterClientController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        event(new Registered($user = $this->create($request)));
+        $clientId = (string) Str::uuid();
+        $logoBigName = $clientId . '-logo.' . $request->file('logo_big')->getClientOriginalExtension();
+        $logoSmallName = $clientId . '-logo_small.' . $request->file('logo_small')->getClientOriginalExtension();
 
-        if ($response = $this->registered($request, $user)) {
-            return $response;
+        try {
+            DB::transaction(function () use ($request, $clientId, $logoBigName, $logoSmallName) {
+                RegistrationMailQueue::ensureTransactional();
+                $this->create($request, $clientId, $logoBigName, $logoSmallName);
+                RegistrationMailQueue::send($request->email, $request->name, 'client', 'received');
+            });
+        } catch (\Throwable $e) {
+            if (! Storage::disk('public')->delete(['images/logo/' . $logoBigName, 'images/logo/' . $logoSmallName])) {
+                Log::error('Logo pendaftaran gagal dibersihkan setelah pendaftaran gagal.', ['client_id' => $clientId]);
+            }
+            throw $e;
         }
 
         return $request->wantsJson() ? new JsonResponse([], 201) : redirect($this->redirectPath());
@@ -81,6 +94,7 @@ class RegisterClientController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:150'],
+            'email' => ['required', 'string', 'email', 'max:255'],
             'name_apps' => ['required', 'string', 'max:150'],
             'web_add' => ['required', 'string', 'max:50'],
             'address' => ['required', 'string', 'max:200'],
@@ -100,7 +114,7 @@ class RegisterClientController extends Controller
             'logo_big' => ['required', 'mimes:png', 'max:1000'],
             'logo_small' => ['required', 'mimes:png', 'max:1000'],
             'agreement' => ['required'],
-            'noref' => ['nullable', 'exists:tcompany'],
+            'noref' => ['required', 'string', 'exists:tcompany,noref'],
         ]);
     }
 
@@ -110,57 +124,27 @@ class RegisterClientController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(Request $request)
+    protected function create(Request $request, string $client_id, string $logoBigName, string $logoSmallName)
     {
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
-        $client_id = Str::uuid();
+        $ref = DB::table('tcompany as a')->sharedLock()
+            ->where('a.noref', $request->noref)
+            ->firstOrFail(['a.id']);
 
-        $logoBig = '';
-        if ($request->hasFile('logo_big')) {
-            try {
-                $logoBigFile = $request->file('logo_big')->getClientOriginalName();
-                $extension = $request->file('logo_big')->getClientOriginalExtension();
-                $logoBigName = $client_id . '-logo' . '.' . $extension;
-                $request->file('logo_big')->storeAs('images/logo', $logoBigName, 'public');
-
-                $logoBig = $logoBigName;
-            } catch (Throwable $th) {
-                $logs->write("ERROR", $th->getMessage());
-            }
-        }
-
-        $logoSmall = '';
-        if ($request->hasFile('logo_small')) {
-            try {
-                $logoSmallFile = $request->file('logo_small')->getClientOriginalName();
-                $extension = $request->file('logo_small')->getClientOriginalExtension();
-                $logoSmallName = $client_id . '-logo_small' . '.' . $extension;
-                $request->file('logo_small')->storeAs('images/logo', $logoSmallName, 'public');
-
-                $logoSmall = $logoSmallName;
-            } catch (Throwable $th) {
-                $logs->write("ERROR", $th->getMessage());
-            }
+        if (! $request->file('logo_big')->storeAs('images/logo', $logoBigName, 'public')
+            || ! $request->file('logo_small')->storeAs('images/logo', $logoSmallName, 'public')) {
+            throw new \RuntimeException('Logo tidak dapat disimpan.');
         }
 
         $logs->write(__FUNCTION__, "STOP\r\n");
-
-        $noref = 'a0d9e27e-a3ab-49b2-96d7-031c95a31191';
-        if ($request->noref) {
-            $ref = DB::table('tcompany as a')->sharedLock()
-                ->select('a.id')
-                ->where('a.noref', $request->noref)
-                ->first('a.id');
-
-            $noref = $ref->id;
-        }
 
         return DB::table('tclient')
             ->insert([
                 'client_id' => $client_id,
                 'instansi_name' => $request->name_apps,
+                'email' => $request->email,
                 'application_name' => $request->name_apps,
                 'address' => $request->address,
                 'country_id' => $request->country,
@@ -178,7 +162,7 @@ class RegisterClientController extends Controller
                 'administrator_phone' => $request->administrator_phone,
                 'logo' => $logoBigName,
                 'logo_small' => $logoSmallName,
-                'company_id' => $noref,
+                'company_id' => $ref->id,
                 'web_add' => $request->web_add,
                 'agreement' => $request->agreement ? 'Y' : 'N',
                 'created_at' => Carbon::now('Asia/Jakarta'),

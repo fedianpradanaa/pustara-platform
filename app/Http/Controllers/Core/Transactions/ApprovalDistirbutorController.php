@@ -7,6 +7,7 @@ use File;
 use Throwable;
 use App\Logs;
 use App\Http\Controllers\Controller;
+use App\Services\RegistrationApproval;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -121,34 +122,14 @@ class ApprovalDistirbutorController extends Controller
         $result['status'] = 200;
         $result['message'] = '';
         try {
-            DB::enableQueryLog();
-
-            foreach (request()->request->all() as $key => $value) {
-                $approve = DB::table('users')
-                    ->where('client_id', $value)
-                    ->update([
-                        'status' => 1,
-                        'updated_at' => Carbon::now('Asia/Jakarta')
-                    ]);
-            }
-            
-            if ($approve) {
-                $logs->write("INFO", "Successfully approve");
-
-                $result['status'] = 201;
-                $result['message'] = "Successfully approve.";
-            }
-
-            $queries = DB::getQueryLog();
-            for ($q = 0; $q < count($queries); $q++) {
-                $logs->write('BINDING', '[' . implode(', ', $queries[$q]['bindings']) . ']');
-                $logs->write('SQL', $queries[$q]['query']);
-            }
+            $missing = RegistrationApproval::partners($request->request->all(), 'distributor', true);
+            $result['status'] = 201;
+            $result['message'] = RegistrationApproval::response($missing);
         } catch (Throwable $th) {
             $logs->write("ERROR", $th->getMessage());
 
             $result['status'] = 500;
-            $result['message'] = "Failed approve.<br>" . $th->getMessage();
+            $result['message'] = ['message' => 'Gagal memperbarui status atau mengantrekan email.'];
         }
 
         return response()->json($result['message'], $result['status']);
@@ -202,34 +183,14 @@ class ApprovalDistirbutorController extends Controller
         $result['status'] = 200;
         $result['message'] = '';
         try {
-            DB::enableQueryLog();
-
-            foreach (request()->request->all() as $key => $value) {
-                $reject = DB::table('users')
-                    ->where('client_id', $value)
-                    ->update([
-                        'status' => 2,
-                        'updated_at' => Carbon::now('Asia/Jakarta')
-                    ]);
-            }
-            
-            if ($reject) {
-                $logs->write("INFO", "Successfully Reject");
-
-                $result['status'] = 201;
-                $result['message'] = "Successfully Reject.";
-            }
-
-            $queries = DB::getQueryLog();
-            for ($q = 0; $q < count($queries); $q++) {
-                $logs->write('BINDING', '[' . implode(', ', $queries[$q]['bindings']) . ']');
-                $logs->write('SQL', $queries[$q]['query']);
-            }
+            $missing = RegistrationApproval::partners($request->request->all(), 'distributor', false);
+            $result['status'] = 201;
+            $result['message'] = RegistrationApproval::response($missing);
         } catch (Throwable $th) {
             $logs->write("ERROR", $th->getMessage());
 
             $result['status'] = 500;
-            $result['message'] = "Failed Reject.<br>" . $th->getMessage();
+            $result['message'] = ['message' => 'Gagal memperbarui status atau mengantrekan email.'];
         }
 
         return response()->json($result['message'], $result['status']);

@@ -14,7 +14,7 @@
         @include('layouts.brand-theme')
 
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="{{ $brand['page_title'] }}" />
+        <meta property="og:title" content="{{ $brand['social_title'] }}" />
         <meta property="og:description" content="{{ $brand['social_description'] }}" />
         <meta property="og:url" content="{{ url('/') }}" />
         @if ($brand['social_image_path'])
@@ -26,7 +26,7 @@
         @endif
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="{{ $brand['page_title'] }}" />
+        <meta name="twitter:title" content="{{ $brand['social_title'] }}" />
         <meta name="twitter:description" content="{{ $brand['social_description'] }}" />
         @if ($brand['social_image_path'])
             <meta name="twitter:image" content="{{ asset($brand['social_image_path']) }}" />
@@ -46,9 +46,7 @@
     </head>
     <body>
         <div id="app">
-            <main class="py-4">
-                <div id="landing-container"></div>
-            </main>
+            <div id="landing-container"></div>
         </div>
     </body>
 </html>

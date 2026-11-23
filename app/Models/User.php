@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Notifications\QueuedVerifyEmail;
+use App\Services\RegistrationMailQueue;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,6 +12,12 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
+
+    public function sendEmailVerificationNotification()
+    {
+        RegistrationMailQueue::ensureTransactional();
+        $this->notify(new QueuedVerifyEmail());
+    }
 
     /**
      * The attributes that are mass assignable.

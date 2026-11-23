@@ -7,6 +7,7 @@ use File;
 use Throwable;
 use App\Logs;
 use App\Http\Controllers\Controller;
+use App\Services\RegistrationApproval;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -49,6 +50,7 @@ class ApprovalClientController extends Controller
                 ->select(
                     'a.client_id as client_id',
                     'a.instansi_name as instansi_name',
+                    'a.email as email',
                     'a.application_name as application_name',
                     'a.address as address',
                     'a.country_id as negara_id',
@@ -128,7 +130,7 @@ class ApprovalClientController extends Controller
                 return file_exists(public_path($path . $value->logo_small)) ? $path . $value->logo_small : '';
             })
             ->editColumn('web_add', function ($value) {
-                return $value->web_add . '.pustakanusantara.id';
+                return $value->web_add . config('brand.current.website_suffix');
             })
             ->addIndexColumn()
             ->toJson();
@@ -148,34 +150,14 @@ class ApprovalClientController extends Controller
         $result['status'] = 200;
         $result['message'] = '';
         try {
-            DB::enableQueryLog();
-
-            foreach (request()->request->all() as $key => $value) {
-                $approve = DB::table('tclient')
-                    ->where('client_id', $value)
-                    ->update([
-                        'flag_appr' => auth()->user()->role == 2 ? 'P' : 'Y',
-                        'updated_at' => Carbon::now('Asia/Jakarta')
-                    ]);
-            }
-            
-            if ($approve) {
-                $logs->write("INFO", "Successfully approve");
-
-                $result['status'] = 201;
-                $result['message'] = "Successfully approve.";
-            }
-
-            $queries = DB::getQueryLog();
-            for ($q = 0; $q < count($queries); $q++) {
-                $logs->write('BINDING', '[' . implode(', ', $queries[$q]['bindings']) . ']');
-                $logs->write('SQL', $queries[$q]['query']);
-            }
+            $missing = RegistrationApproval::clients($request->request->all(), (int) auth()->user()->role, true);
+            $result['status'] = 201;
+            $result['message'] = RegistrationApproval::response($missing);
         } catch (Throwable $th) {
             $logs->write("ERROR", $th->getMessage());
 
             $result['status'] = 500;
-            $result['message'] = "Failed approve.<br>" . $th->getMessage();
+            $result['message'] = ['message' => 'Gagal memperbarui status atau mengantrekan email.'];
         }
 
         return response()->json($result['message'], $result['status']);
@@ -229,34 +211,14 @@ class ApprovalClientController extends Controller
         $result['status'] = 200;
         $result['message'] = '';
         try {
-            DB::enableQueryLog();
-
-            foreach (request()->request->all() as $key => $value) {
-                $reject = DB::table('tclient')
-                ->where('client_id', $value)
-                ->update([
-                    'flag_appr' => 'R',
-                    'updated_at' => Carbon::now('Asia/Jakarta')
-                ]);
-            }
-            
-            if ($reject) {
-                $logs->write("INFO", "Successfully Reject");
-
-                $result['status'] = 201;
-                $result['message'] = "Successfully Reject.";
-            }
-
-            $queries = DB::getQueryLog();
-            for ($q = 0; $q < count($queries); $q++) {
-                $logs->write('BINDING', '[' . implode(', ', $queries[$q]['bindings']) . ']');
-                $logs->write('SQL', $queries[$q]['query']);
-            }
+            $missing = RegistrationApproval::clients($request->request->all(), (int) auth()->user()->role, false);
+            $result['status'] = 201;
+            $result['message'] = RegistrationApproval::response($missing);
         } catch (Throwable $th) {
             $logs->write("ERROR", $th->getMessage());
 
             $result['status'] = 500;
-            $result['message'] = "Failed Reject.<br>" . $th->getMessage();
+            $result['message'] = ['message' => 'Gagal memperbarui status atau mengantrekan email.'];
         }
 
         return response()->json($result['message'], $result['status']);

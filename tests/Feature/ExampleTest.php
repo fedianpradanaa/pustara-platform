@@ -29,7 +29,7 @@ class ExampleTest extends TestCase
             ->assertSee('content="1200"', false)
             ->assertSee('content="630"', false)
             ->assertSee('rel="icon" href="' . asset('images/logo/favicon.png') . '" type="image/png"', false)
-            ->assertSee('rel="apple-touch-icon" href="' . asset('images/logo/favicon.png') . '"', false);
+            ->assertSee('rel="apple-touch-icon" href="' . asset('images/logo/apple-touch-icon.png') . '"', false);
     }
 
     public function test_registration_page_advertises_the_same_icons(): void
@@ -39,6 +39,6 @@ class ExampleTest extends TestCase
         $this->get('/pendaftaran-supplier')
             ->assertOk()
             ->assertSee('rel="icon" href="' . asset('images/logo/favicon.png') . '" type="image/png"', false)
-            ->assertSee('rel="apple-touch-icon" href="' . asset('images/logo/favicon.png') . '"', false);
+            ->assertSee('rel="apple-touch-icon" href="' . asset('images/logo/apple-touch-icon.png') . '"', false);
     }
 }

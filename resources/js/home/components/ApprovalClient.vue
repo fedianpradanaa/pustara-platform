@@ -244,6 +244,7 @@ export default {
                 { label: 'Client ID', key: 'client_id' },
                 { label: 'Status', key: 'flag_appr' },
                 { label: 'Nama Instansi', key: 'instansi_name' },
+                { label: 'Email', key: 'email' },
                 { label: 'Nama Aplikasi', key: 'application_name' },
                 { label: 'Alamat', key: 'address' },
                 { label: 'Negara', key: 'country_name' },
@@ -378,7 +379,11 @@ export default {
                             this.selectedRows = []
                             this.getData()
                             loader.hide()
-                            this.$notyf.success('Successfully Approve Client')
+                            if (response.data.warning) {
+                                this.$notyf.error(response.data.warning)
+                            } else {
+                                this.$notyf.success(response.data.message)
+                            }
                         })
                         .catch((e) => {
                             this.form.submitted = false
@@ -410,7 +415,11 @@ export default {
                             this.selectedRows = []
                             this.getData()
                             loader.hide()
-                            this.$notyf.success('Successfully Reject Client')
+                            if (response.data.warning) {
+                                this.$notyf.error(response.data.warning)
+                            } else {
+                                this.$notyf.success(response.data.message)
+                            }
                         })
                         .catch((e) => {
                             this.form.submitted = false

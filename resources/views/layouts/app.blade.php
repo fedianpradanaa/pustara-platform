@@ -19,6 +19,9 @@
         <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet" />
 
         <!-- Scripts -->
+        <script>
+            window.brandConfig = @json(config('brand.current'));
+        </script>
         @vite(['resources/css/app.css', 'resources/js/home/app.js'])
     </head>
     <body class="relative box-border max-h-screen min-w-[375px] bg-sidebar-color font-sans">
