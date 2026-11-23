@@ -211,6 +211,7 @@
                                                         <a href="javascript:void(0);" class="download-link inline-block rounded border border-emerald-600 bg-emerald-600 px-3 py-1 text-sm font-medium text-white hover:bg-transparent hover:text-emerald-600 focus:outline-none focus:ring active:text-emerald-500" @click="getDetail(row)">Detail</a>
                                                         <a href="javascript:void(0);" class="download-link inline-block rounded border border-emerald-600 bg-emerald-600 px-3 py-1 text-sm font-medium text-white hover:bg-transparent hover:text-emerald-600 focus:outline-none focus:ring active:text-emerald-500" @click="getDetailSupplier(row)">Detail Supplier</a>
                                                         <a v-if="row['status'] == '0' && user.role == 2" href="javascript:void(0);" class="download-link inline-block w-36 rounded border border-sky-600 bg-sky-600 px-3 py-1 text-center text-sm font-medium text-white hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-sky-500" @click="sendSupplier(row, '1')">Approve Distributor</a>
+                                                        <a v-if="row['status'] == '0' && user.role == 0" href="javascript:void(0);" class="download-link inline-block w-36 rounded border border-sky-600 bg-sky-600 px-3 py-1 text-center text-sm font-medium text-white hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-sky-500" @click="approvePo(row)">Setujui PO</a>
                                                         <a v-if="row['status'] == '1' && user.role == 0" href="javascript:void(0);" class="download-link inline-block w-36 rounded border border-sky-600 bg-sky-600 px-3 py-1 text-center text-sm font-medium text-white hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-sky-500" @click="sendSupplier(row, '2')">Approve Client</a>
                                                         <a v-if="row['po_type'] == '1' && row['status'] == '2' && user.role == 0" href="javascript:void(0);" class="download-link inline-block w-36 rounded border border-sky-600 bg-sky-600 px-3 py-1 text-center text-sm font-medium text-white hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-sky-500" @click="sendSupplier(row, '3')">Approve Supplier</a>
                                                         <a v-if="row['po_type'] == '1' && row['status'] == '2' && user.role == 0" href="javascript:void(0);" class="download-link inline-block w-36 rounded border border-rose-600 bg-rose-600 px-3 py-1 text-center text-sm font-medium text-white hover:bg-transparent hover:text-rose-600 focus:outline-none focus:ring active:text-rose-500" @click="destroy(row)">Tarik</a>
@@ -886,6 +887,12 @@ export default {
                             this.$notyf.error(e.message || 'An error occurred.')
                         }
                     })
+            }
+        },
+
+        approvePo(row) {
+            if (window.confirm('PO ini belum disetujui distributor. Lanjutkan persetujuan oleh admin?')) {
+                this.sendSupplier(row, '2')
             }
         },
 

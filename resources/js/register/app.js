@@ -43,6 +43,7 @@ const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImage
 const app = createApp(App)
 
 app.config.globalProperties.$notyf = notyf
+app.config.globalProperties.$brand = window.brandConfig
 
 /**
  * The following block of code may be used to automatically register your

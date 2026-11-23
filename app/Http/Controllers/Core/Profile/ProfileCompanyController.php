@@ -1243,7 +1243,10 @@ class ProfileCompanyController extends Controller
         }
         $logs->write(__FUNCTION__, "STOP\r\n");
 
-        return view('pdf.agreement_letter', ['results' => json_decode(json_encode($results), FALSE)]);
+        return view('pdf.agreement_letter', [
+            'results' => json_decode(json_encode($results), FALSE),
+            'brand' => config('brand.current'),
+        ]);
     }
 
     /**

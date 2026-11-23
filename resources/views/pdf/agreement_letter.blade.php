@@ -603,7 +603,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style='vertical-align: top;width: 100%;'>Pihak Kedua wajib mempromosikan dan menjual buku digital Platform Pustaka Nusantara dengan cara yang profesional dan etis, khususnya kepada target pasar yang telah ditentukan.</td>
+                        <td style='vertical-align: top;width: 100%;'>Pihak Kedua wajib mempromosikan dan menjual buku digital Platform " . e($brand['name']) . " dengan cara yang profesional dan etis, khususnya kepada target pasar yang telah ditentukan.</td>
                     </tr>
                 </tbody>
             </table>

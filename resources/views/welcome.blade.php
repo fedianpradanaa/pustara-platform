@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+@php($brand = config('brand.current'))
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8" />
@@ -7,24 +8,29 @@
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-        <title>Pustaka Nusantara</title>
-        <meta name="description" content="Pustaka Nusantara adalah perpustakaan digital untuk menemukan dan menikmati koleksi bacaan dengan mudah." />
+        <title>{{ $brand['page_title'] }}</title>
+        <meta name="description" content="{{ $brand['description'] }}" />
         @include('layouts.favicon')
+        @include('layouts.brand-theme')
 
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Pustaka Nusantara" />
-        <meta property="og:description" content="Perpustakaan digital, lebih dekat dan mudah diakses. Temukan dan nikmati koleksi bacaan melalui Pustaka Nusantara." />
+        <meta property="og:title" content="{{ $brand['page_title'] }}" />
+        <meta property="og:description" content="{{ $brand['social_description'] }}" />
         <meta property="og:url" content="{{ url('/') }}" />
-        <meta property="og:image" content="{{ asset('images/logo/social-preview.png') }}" />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Pustaka Nusantara, perpustakaan digital" />
+        @if ($brand['social_image_path'])
+            <meta property="og:image" content="{{ asset($brand['social_image_path']) }}" />
+            <meta property="og:image:type" content="image/png" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta property="og:image:alt" content="{{ $brand['name'] }}, perpustakaan digital" />
+        @endif
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Pustaka Nusantara" />
-        <meta name="twitter:description" content="Perpustakaan digital, lebih dekat dan mudah diakses." />
-        <meta name="twitter:image" content="{{ asset('images/logo/social-preview.png') }}" />
+        <meta name="twitter:title" content="{{ $brand['page_title'] }}" />
+        <meta name="twitter:description" content="{{ $brand['social_description'] }}" />
+        @if ($brand['social_image_path'])
+            <meta name="twitter:image" content="{{ asset($brand['social_image_path']) }}" />
+        @endif
 
         <style>
             html {
@@ -33,6 +39,9 @@
         </style>
         
         <!-- Scripts -->
+        <script>
+            window.brandConfig = @json($brand);
+        </script>
         @vite(['resources/css/app.css', 'resources/js/landing/app.js'])
     </head>
     <body>

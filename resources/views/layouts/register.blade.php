@@ -7,10 +7,11 @@
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('brand.current.page_title') }}</title>
 
         <!-- Favicon -->
         @include('layouts.favicon')
+        @include('layouts.brand-theme')
         @yield('favicon')
 
         <!-- Fonts -->
@@ -19,6 +20,9 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" />
 
         <!-- Scripts -->
+        <script>
+            window.brandConfig = @json(config('brand.current'));
+        </script>
         @vite(['resources/css/app.css', 'resources/js/register/app.js'])
     </head>
     <body>

@@ -7,7 +7,8 @@
                 <div class="hidden lg:relative lg:block lg:p-12">
                     <a class="block text-white" href="/">
                         <span class="sr-only">Home</span>
-                        <img class="w-40" src="images/logo/logo.png" alt="logo" />
+                        <img v-if="$brand.logo_path" class="w-40" :src="'/' + $brand.logo_path" :alt="$brand.name" />
+                        <span v-else class="text-xl font-bold text-white">{{ $brand.name }}</span>
                     </a>
 
                     <h2 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Formulir Pendaftaran</h2>
@@ -21,7 +22,8 @@
                     <div class="relative -mt-16 block lg:hidden">
                         <a class="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20" href="#">
                             <span class="sr-only">Home</span>
-                            <img src="images/logo/favicon.png" alt="logo" />
+                            <img v-if="$brand.favicon_path" :src="'/' + $brand.favicon_path" :alt="$brand.name" />
+                            <span v-else class="text-sm font-bold">{{ $brand.name }}</span>
                         </a>
 
                         <h1 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">Formulir Pendaftaran</h1>
@@ -58,7 +60,7 @@
                                         <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Alamat Website Perpustakaan <span class="text-red-600">*</span></span>
                                     </label>
 
-                                    <span class="inline-flex h-10 items-center rounded-r-md border border-l-0 bg-gray-200 px-3 text-sm text-gray-500 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400">.pustakanusantara.id</span>
+                                    <span v-if="$brand.website_suffix" class="inline-flex h-10 items-center rounded-r-md border border-l-0 bg-gray-200 px-3 text-sm text-gray-500 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400">{{ $brand.website_suffix }}</span>
                                 </div>
                                 <ErrorMessage name="web_add" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
@@ -249,14 +251,14 @@
                                 </div>
                                 <div class="min-w-0">
                                     <p class="text-xs font-semibold uppercase tracking-wider text-blue-700">Syarat dan Ketentuan</p>
-                                    <DialogTitle as="h3" class="mt-1 text-lg font-bold leading-snug text-gray-900 sm:text-xl">Pendaftaran Perpustakaan Digital Pustaka Nusantara</DialogTitle>
+                                    <DialogTitle as="h3" class="mt-1 text-lg font-bold leading-snug text-gray-900 sm:text-xl">Pendaftaran Perpustakaan Digital {{ $brand.name }}</DialogTitle>
                                     <p class="mt-1 text-sm leading-5 text-gray-500">Mohon baca dan setujui ketentuan berikut untuk melanjutkan pendaftaran.</p>
                                 </div>
                             </div>
                             <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-7">
                                 <dl class="space-y-3 text-sm leading-6 [&>div]:rounded-lg [&>div]:bg-gray-50 [&>div]:px-4 [&>div]:py-3 [&>div]:ring-1 [&>div]:ring-gray-100 [&_dd]:text-gray-700">
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">1. Perpustakaan Digital Pustaka Nusantara adalah platform aplikasi berbasis website.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">1. Perpustakaan Digital {{ $brand.name }} adalah platform aplikasi berbasis website.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -264,7 +266,7 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">3. Nama Perpustakaan Digital pada Platform Pustaka Nusantara akan menggunakan nama Lembaga Perpustakaan, sesuai dengan ketetapan dari pihak tersebut.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">3. Nama Perpustakaan Digital pada Platform {{ $brand.name }} akan menggunakan nama Lembaga Perpustakaan, sesuai dengan ketetapan dari pihak tersebut.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -276,7 +278,7 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">6. Apabila dua Lembaga Perpustakaan pengguna Platform Pustaka Nusantara melakukan merger (penggabungan), perpustakaan digital masing-masing dapat digabung dengan syarat pengisian surat pernyataan merger dan penambahan koleksi senilai minimal Rp. 3.000.000,-.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">6. Apabila dua Lembaga Perpustakaan pengguna Platform {{ $brand.name }} melakukan merger (penggabungan), perpustakaan digital masing-masing dapat digabung dengan syarat pengisian surat pernyataan merger dan penambahan koleksi senilai minimal Rp. 3.000.000,-.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -316,10 +318,10 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">16. Pihak Lembaga Perpustakaan membayar Biaya Lisensi senilai Rp. 150.000,- dalam 1 tahun untuk tetap menikmati semua layanan fitur dan konten platform Pustaka Nusantara, namun jika dalam 1 tahun ada pembelian koleksi minimal senilai Rp. 1.000.000,-, maka tidak ada biaya lisensi (gratis).</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">16. Pihak Lembaga Perpustakaan membayar Biaya Lisensi senilai Rp. 150.000,- dalam 1 tahun untuk tetap menikmati semua layanan fitur dan konten platform {{ $brand.name }}, namun jika dalam 1 tahun ada pembelian koleksi minimal senilai Rp. 1.000.000,-, maka tidak ada biaya lisensi (gratis).</dd>
                                                     </div>
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">17. Apabila selama 3 (tiga) tahun berturut-turut Pihak Lembaga Perpustakaan tidak melakukan pembelian koleksi e-book maupun pembayaran Biaya Lisensi, layanan perpustakaan digital bagi lembaga tersebut pada platform Pustaka Nusantara akan dinonaktifkan sementara. Apabila kondisi tersebut berlanjut hingga mencapai 5 (lima) tahun berturut-turut, layanan perpustakaan digital tersebut akan dinonaktifkan secara permanen. Dalam hal penonaktifan permanen, koleksi e-book yang telah dibeli akan diserahkan kepada Pihak Lembaga Perpustakaan dalam bentuk file yang dapat diakses secara luring (offline), dengan akses terbatas hanya pada 1 (satu) komputer.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">17. Apabila selama 3 (tiga) tahun berturut-turut Pihak Lembaga Perpustakaan tidak melakukan pembelian koleksi e-book maupun pembayaran Biaya Lisensi, layanan perpustakaan digital bagi lembaga tersebut pada platform {{ $brand.name }} akan dinonaktifkan sementara. Apabila kondisi tersebut berlanjut hingga mencapai 5 (lima) tahun berturut-turut, layanan perpustakaan digital tersebut akan dinonaktifkan secara permanen. Dalam hal penonaktifan permanen, koleksi e-book yang telah dibeli akan diserahkan kepada Pihak Lembaga Perpustakaan dalam bentuk file yang dapat diakses secara luring (offline), dengan akses terbatas hanya pada 1 (satu) komputer.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -330,7 +332,7 @@
                             <div class="border-t border-gray-100 bg-white px-5 py-4 sm:px-7">
                                 <label for="agreement" class="flex cursor-pointer items-start gap-3">
                                     <input type="checkbox" id="agreement" name="agreement" v-model="form.field.agreement" class="mt-0.5 size-5 flex-shrink-0 rounded-md border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500" />
-                                    <span class="text-sm leading-6 text-gray-700">Saya telah membaca dan menyetujui Syarat dan Ketentuan Pendaftaran Perpustakaan Digital Pustaka Nusantara. <span class="font-semibold text-red-600">*</span></span>
+                                    <span class="text-sm leading-6 text-gray-700">Saya telah membaca dan menyetujui Syarat dan Ketentuan Pendaftaran Perpustakaan Digital {{ $brand.name }}. <span class="font-semibold text-red-600">*</span></span>
                                 </label>
                                 <div class="mt-4 flex justify-end">
                                     <button type="button" class="inline-flex w-full justify-center rounded-md bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto" @click="open = false" :disabled="!form.field.agreement">Saya Setuju</button>

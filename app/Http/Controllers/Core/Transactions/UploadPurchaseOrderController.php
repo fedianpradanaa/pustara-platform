@@ -486,6 +486,11 @@ class UploadPurchaseOrderController extends Controller
 
         $result['status'] = 200;
         $result['message'] = '';
+
+        if ($id === '2' && (int) $request->user()->role !== 0) {
+            return response()->json('Forbidden', 403);
+        }
+
         try {
             DB::enableQueryLog();
 
