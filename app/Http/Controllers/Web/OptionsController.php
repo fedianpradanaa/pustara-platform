@@ -307,7 +307,7 @@ class OptionsController extends Controller
                 $id = json_decode(json_encode($id));
         } else {
             $id = [
-                'name' => 'PT. PUSTAKA NUSANTARA',
+                'name' => config('brand.current.name'),
                 'country' => '',
                 'province' => '',
                 'province_name' => '',

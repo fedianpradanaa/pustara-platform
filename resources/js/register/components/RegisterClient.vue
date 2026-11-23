@@ -219,7 +219,7 @@
                                 <label for="agreement" class="flex gap-4">
                                     <input type="checkbox" id="agreement" name="agreement" v-model="form.field.agreement" class="size-5 rounded-md border-gray-200 bg-white shadow-sm" disabled />
 
-                                    <span class="text-sm text-gray-700"> Saya telah memahami dan menyetujui ketentuan dan persyaratan Pendaftaran Perpustakaan Digital Berbasis Website yang diajukan oleh pihak Pustaka Nusantara. <span class="font-semibold text-red-600">*</span></span>
+                                    <span class="text-sm text-gray-700"> Saya telah memahami dan menyetujui ketentuan dan persyaratan Pendaftaran Perpustakaan Digital Berbasis Website yang diajukan oleh pihak {{ $brand.name }}. <span class="font-semibold text-red-600">*</span></span>
                                 </label>
                                 <ErrorMessage name="agreement" class="mt-1 block text-sm text-red-600 dark:text-red-500" />
                             </div>
@@ -282,7 +282,7 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">7. Koleksi perpustakaan yang dibeli bersifat hak milik, namun Pustaka Nusantara tidak berkewajiban melakukan pembaruan atau perbaikan kecuali jika Pihak Lembaga Perpustakaan telah melakukan penambahan koleksi selama tahun berjalan.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">7. Koleksi perpustakaan yang dibeli bersifat hak milik, namun {{ $brand.name }} tidak berkewajiban melakukan pembaruan atau perbaikan kecuali jika Pihak Lembaga Perpustakaan telah melakukan penambahan koleksi selama tahun berjalan.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -290,7 +290,7 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">9. Pustaka Nusantara menyediakan versi offline dengan ketentuan minimal pembelian koleksi perpustakaan, sesuai dengan ketentuan terpisah.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">9. {{ $brand.name }} menyediakan versi offline dengan ketentuan minimal pembelian koleksi perpustakaan, sesuai dengan ketentuan terpisah.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -306,15 +306,15 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">13. Jika Distributor yang dipilih tidak memenuhi kewajiban pembayaran kepada Pustaka Nusantara, maka Pihak Pustaka Nusantara berhak menurunkan koleksi terkait dari platform.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">13. Jika Distributor yang dipilih tidak memenuhi kewajiban pembayaran kepada {{ $brand.name }}, maka Pihak {{ $brand.name }} berhak menurunkan koleksi terkait dari platform.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">14. Pustaka Nusantara akan meningkatkan versi perpustakaan digital setiap tahun. Fitur-fitur tertentu hanya dapat diakses pada versi terbaru, dan Lembaga Perpustakaan harus melakukan pembelian koleksi untuk menikmati pembaruan otomatis.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">14. {{ $brand.name }} akan meningkatkan versi perpustakaan digital setiap tahun. Fitur-fitur tertentu hanya dapat diakses pada versi terbaru, dan Lembaga Perpustakaan harus melakukan pembelian koleksi untuk menikmati pembaruan otomatis.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">15. Selain ebook, produk digital yang disediakan oleh Pustaka Nusantara di antaranya: ebook media interaktif, audiobook, videobook, video tutorial dan konten digital lainnya yang akan terus dikembangkan.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">15. Selain ebook, produk digital yang disediakan oleh {{ $brand.name }} di antaranya: ebook media interaktif, audiobook, videobook, video tutorial dan konten digital lainnya yang akan terus dikembangkan.</dd>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
@@ -325,7 +325,7 @@
                                                     </div>
 
                                                     <div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-1 sm:gap-1">
-                                                        <dd class="text-gray-700 sm:col-span-2">Saya telah memahami dan menyetujui ketentuan dan persyaratan Pendaftaran Perpustakaan Digital Berbasis Website yang diajukan oleh pihak Pustaka Nusantara.</dd>
+                                                        <dd class="text-gray-700 sm:col-span-2">Saya telah memahami dan menyetujui ketentuan dan persyaratan Pendaftaran Perpustakaan Digital Berbasis Website yang diajukan oleh pihak {{ $brand.name }}.</dd>
                                                     </div>
                                 </dl>
                             </div>
