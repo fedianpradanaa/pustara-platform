@@ -17,7 +17,9 @@
                                     <Field type="email" id="email" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Email" name="email" v-model="form.field.email" required autocomplete="email" aria-describedby="email-help" />
                                     <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700">Email <span class="text-red-600">*</span></span>
                                 </label>
-                                <p id="email-help" class="mt-2 text-xs leading-5 text-slate-600">Gunakan alamat email aktif untuk menerima pemberitahuan pendaftaran dan status pengajuan.</p>
+                                <p id="email-help" class="mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800">
+                                    <span class="font-semibold">Penting:</span> Gunakan alamat email yang valid, aktif, dan dapat Anda akses. Pemberitahuan penerimaan pendaftaran serta hasil persetujuan atau penolakan akan dikirim ke alamat ini.
+                                </p>
                                 <ErrorMessage name="email" class="mt-1 block text-xs text-red-600" />
                             </div>
 

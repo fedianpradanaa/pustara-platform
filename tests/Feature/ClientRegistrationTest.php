@@ -9,6 +9,26 @@ use Tests\TestCase;
 
 class ClientRegistrationTest extends TestCase
 {
+    public function test_client_temp_email_migration_preserves_existing_rows_and_can_be_rolled_back(): void
+    {
+        config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
+        DB::purge('sqlite');
+
+        (require database_path('migrations/2025_01_12_142325_create_tclient_temp_table.php'))->up();
+        DB::table('tclient_temp')->insert(['client_id' => 'existing']);
+
+        $migration = require database_path('migrations/2026_11_24_000002_add_email_to_tclient_temp_table.php');
+        $migration->up();
+
+        $this->assertDatabaseHas('tclient_temp', ['client_id' => 'existing', 'email' => null]);
+        DB::table('tclient_temp')->where('client_id', 'existing')->update(['email' => 'client@example.test']);
+        $this->assertDatabaseHas('tclient_temp', ['client_id' => 'existing', 'email' => 'client@example.test']);
+
+        $migration->down();
+        $this->assertFalse(Schema::hasColumn('tclient_temp', 'email'));
+        $this->assertDatabaseHas('tclient_temp', ['client_id' => 'existing']);
+    }
+
     public function test_reference_code_is_required_and_must_exist(): void
     {
         config([

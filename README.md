@@ -60,6 +60,7 @@ Nama program harus sesuai dengan konfigurasi Supervisor di server, dan worker ha
 Antrean email memakai koneksi database aplikasi dan tabel `jobs`. Tanpa worker, email tidak akan terkirim. Email yang gagal dicoba ulang hingga lima kali; periksa `php artisan queue:failed` dan gunakan `php artisan queue:retry <id>` setelah masalah SMTP diperbaiki. Email verifikasi supplier/distributor juga menggunakan antrean. `APP_URL` harus benar agar tautan verifikasi mengarah ke platform yang sesuai.
 
 Pendaftaran client lama tanpa email tetap dapat diproses, tetapi admin menerima peringatan bahwa email status tidak dikirim. Pemberitahuan pendaftaran client baru dikirim setelah data tersimpan; persetujuan awal oleh distributor belum merupakan persetujuan akhir admin.
+Pendaftaran client belum memiliki tautan verifikasi email; email yang dikirim hanya pemberitahuan status pendaftaran. Migrasi juga menambahkan kolom `email` yang dapat bernilai kosong pada `tclient_temp`.
 
 ### Lupa password supplier dan distributor
 
