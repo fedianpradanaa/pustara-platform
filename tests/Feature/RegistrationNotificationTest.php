@@ -60,7 +60,7 @@ class RegistrationNotificationTest extends TestCase
     public function test_client_registration_stores_email_and_queues_receipt(): void
     {
         Storage::fake('public');
-        DB::table('tcompany')->insert(['id' => 'distributor-1', 'noref' => 'REF123']);
+        DB::table('tcompany')->insert(['id' => 'distributor-1', 'noref' => 'REF123', 'type' => '2']);
 
         $this->post('/pendaftaran-client', $this->clientData(), ['Accept' => 'application/json'])->assertCreated();
 
@@ -133,6 +133,17 @@ class RegistrationNotificationTest extends TestCase
         $this->assertCount(4, Mail::mailer()->getSymfonyTransport()->messages());
     }
 
+    public function test_distributor_reference_is_required_and_unique(): void
+    {
+        $data = $this->partnerData('distributor');
+        $data['noref'] = '';
+        $this->postJson('/pendaftaran-distributor', $data)->assertUnprocessable()->assertJsonValidationErrors('noref');
+
+        DB::table('tcompany')->insert(['id' => 'existing', 'type' => '2', 'noref' => 'REF123']);
+        $data['noref'] = 'REF123';
+        $this->postJson('/pendaftaran-distributor', $data)->assertUnprocessable()->assertJsonValidationErrors('noref');
+    }
+
     public function test_final_decisions_queue_notices_and_legacy_client_warns(): void
     {
         DB::table('tclient')->insert([
@@ -195,7 +206,7 @@ class RegistrationNotificationTest extends TestCase
     public function test_queue_failure_rolls_back_client_registration_and_cleans_uploaded_logos(): void
     {
         Storage::fake('public');
-        DB::table('tcompany')->insert(['id' => 'distributor-1', 'noref' => 'REF123']);
+        DB::table('tcompany')->insert(['id' => 'distributor-1', 'noref' => 'REF123', 'type' => '2']);
         Schema::drop('jobs');
 
         $this->post('/pendaftaran-client', $this->clientData(), ['Accept' => 'application/json'])->assertStatus(500);

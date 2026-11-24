@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Notifications\QueuedVerifyEmail;
+use App\Notifications\QueuedResetPassword;
 use App\Services\RegistrationMailQueue;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         RegistrationMailQueue::ensureTransactional();
         $this->notify(new QueuedVerifyEmail());
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        RegistrationMailQueue::ensureTransactional();
+        $this->notify(new QueuedResetPassword($token));
     }
 
     /**

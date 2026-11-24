@@ -19,31 +19,35 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                 </svg>
             </div>
-            <div class="relative">
+            <div ref="accountMenu" class="relative">
                 <button
                     type="button"
-                    class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-2.5 text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    aria-label="Menu akun"
+                    class="flex h-12 items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50 px-2.5 text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="Menu akun dan keluar"
+                    aria-controls="account-menu"
                     :aria-expanded="profileMenuOpen"
                     @click="profileMenuOpen = !profileMenuOpen"
                 >
-                    <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        </svg>
+                    <img :src="'/' + $brand.favicon_path" :alt="$brand.name" class="h-9 w-9 rounded-xl bg-white object-contain p-1" />
+                    <span class="text-left leading-tight">
+                        <span class="block max-w-32 truncate text-sm font-bold">{{ user.name || 'Akun' }}</span>
+                        <span class="block text-[11px] font-medium text-blue-700">Akun &amp; keluar</span>
                     </span>
-                    <span v-if="user.name" class="hidden max-w-36 truncate text-sm font-semibold sm:block">{{ user.name }}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </button>
-                <div v-if="profileMenuOpen" class="absolute right-0 top-full z-30 mt-2 w-40 rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
-                    <button type="button" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="logout">
+                <div v-if="profileMenuOpen" id="account-menu" class="absolute right-0 top-full z-30 mt-2 w-64 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl">
+                    <div class="border-b border-slate-100 px-3 py-3">
+                        <p class="truncate text-sm font-bold text-slate-800">{{ user.name || 'Akun saya' }}</p>
+                        <p class="mt-1 text-xs text-slate-500">Kelola sesi dashboard Anda</p>
+                    </div>
+                    <button type="button" class="mt-2 flex w-full items-center gap-2 rounded-xl bg-red-50 px-3 py-3 text-left text-sm font-bold text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500" @click="logout">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                             <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd" />
                             <path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z" clip-rule="evenodd" />
                         </svg>
-                        Sign out
+                        Keluar dari dashboard
                     </button>
                 </div>
             </div>
@@ -128,11 +132,13 @@ export default {
     mounted() {
         window.addEventListener('resize', this.handleResize)
         document.addEventListener('keydown', this.handleKeydown)
+        document.addEventListener('click', this.handleOutsideClick)
     },
 
     beforeUnmount() {
         window.removeEventListener('resize', this.handleResize)
         document.removeEventListener('keydown', this.handleKeydown)
+        document.removeEventListener('click', this.handleOutsideClick)
     },
 
     methods: {
@@ -151,15 +157,24 @@ export default {
         },
 
         async logout() {
-            await window.axios.post('/logout').then((e) => {
-                this.$notyf.success('Logout successful!')
+            try {
+                await window.axios.post('/logout')
+                this.$notyf.success('Anda berhasil keluar.')
                 window.location = '/'
-            })
+            } catch (e) {
+                this.$notyf.error('Tidak dapat keluar. Silakan coba lagi.')
+            }
         },
 
         handleResize() {
             if (window.innerWidth >= 1024) {
                 this.sidebarOpen = false
+            }
+        },
+
+        handleOutsideClick(event) {
+            if (this.$refs.accountMenu && !this.$refs.accountMenu.contains(event.target)) {
+                this.profileMenuOpen = false
             }
         },
 

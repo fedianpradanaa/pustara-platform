@@ -6,13 +6,14 @@ Auth::routes([
     'register' => false,
     'verify' => true,
     'confirm' => false,
-    'reset' => false
+    'reset' => true
 ]);
 
 Route::get('pendaftaran-supplier', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('pendaftaran-supplier', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 Route::get('pendaftaran-client', [App\Http\Controllers\Auth\RegisterClientController::class, 'showRegistrationForm'])->name('register-client');
 Route::post('pendaftaran-client', [App\Http\Controllers\Auth\RegisterClientController::class, 'register']);
+Route::post('pendaftaran-client/periksa-referensi', [App\Http\Controllers\Auth\RegisterClientController::class, 'checkReference'])->middleware('throttle:60,1');
 Route::get('pendaftaran-distributor', [App\Http\Controllers\Auth\RegisterDistributorController::class, 'showRegistrationForm'])->name('register-distributor');
 Route::post('pendaftaran-distributor', [App\Http\Controllers\Auth\RegisterDistributorController::class, 'register']);
 

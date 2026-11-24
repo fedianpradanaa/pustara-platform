@@ -1,65 +1,33 @@
-@extends('layouts.app')
+@extends('layouts.password')
+
+@section('title', 'Atur ulang password')
 
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">{{ __('Reset Password') }}</div>
+    <h1 class="text-2xl font-bold text-slate-900">Atur ulang password</h1>
+    <p class="mt-2 text-sm leading-6 text-slate-600">Buat password baru minimal 8 karakter untuk akun supplier atau distributor Anda.</p>
 
-                    <div class="card-body">
-                        <form method="POST" action="{{ route('password.update') }}">
-                            @csrf
-
-                            <input type="hidden" name="token" value="{{ $token }}" />
-
-                            <div class="row mb-3">
-                                <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                                <div class="col-md-6">
-                                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus />
-
-                                    @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                                <div class="col-md-6">
-                                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" />
-
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
-
-                                <div class="col-md-6">
-                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-0">
-                                <div class="col-md-6 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Reset Password') }}
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <form method="POST" action="{{ route('password.update') }}" class="mt-6 space-y-4">
+        @csrf
+        <input type="hidden" name="token" value="{{ $token }}" />
+        <div>
+            <label for="email" class="mb-1 block text-sm font-semibold">Email</label>
+            <input id="email" type="email" name="email" value="{{ old('email', $email) }}" required autocomplete="email" class="w-full rounded-xl border-slate-300" />
+            @error('email')
+                <p class="mt-1 text-sm text-red-600" role="alert">{{ $message }}</p>
+            @enderror
         </div>
-    </div>
+        <div>
+            <label for="password" class="mb-1 block text-sm font-semibold">Password baru</label>
+            <input id="password" type="password" name="password" required minlength="8" autocomplete="new-password" class="w-full rounded-xl border-slate-300" />
+            @error('password')
+                <p class="mt-1 text-sm text-red-600" role="alert">{{ $message }}</p>
+            @enderror
+        </div>
+        <div>
+            <label for="password-confirmation" class="mb-1 block text-sm font-semibold">Konfirmasi password baru</label>
+            <input id="password-confirmation" type="password" name="password_confirmation" required minlength="8" autocomplete="new-password" class="w-full rounded-xl border-slate-300" />
+        </div>
+        <button type="submit" class="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700">Simpan password baru</button>
+    </form>
+    <a href="{{ route('login') }}" class="mt-5 block text-center text-sm font-semibold text-blue-700">Kembali ke halaman masuk</a>
 @endsection

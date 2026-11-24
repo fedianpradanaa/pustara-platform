@@ -183,11 +183,13 @@
 
                             <div class="col-span-6">
                                 <label for="noref" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.noref ? 'border-red-500' : 'border-gray-200'">
-                                    <Field type="text" id="noref" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Kode Referensi" name="noref" v-model="form.field.noref" required aria-describedby="reference-help" />
+                                    <Field type="text" id="noref" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Kode Referensi" name="noref" v-model="form.field.noref" required maxlength="20" aria-describedby="reference-help reference-status" @input="resetReference" @blur="checkReference" />
 
                                     <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Kode Referensi <span class="text-red-600">*</span></span>
                                 </label>
                                 <p id="reference-help" class="mt-2 text-xs leading-5 text-slate-600">Kode referensi diberikan oleh distributor yang menawarkan aplikasi perpustakaan digital. Jika belum mengetahui kode Anda, silakan hubungi distributor atau admin {{ $brand.name }} untuk mendapatkannya.</p>
+                                <button type="button" class="mt-2 text-sm font-semibold text-blue-700 underline" :disabled="referenceChecking || !form.field.noref.trim()" @click="checkReference">Periksa kode referensi</button>
+                                <p id="reference-status" class="mt-1 text-xs" :class="referenceStatus === 'valid' ? 'text-green-700' : 'text-red-600'" role="status">{{ referenceMessage }}</p>
                                 <ErrorMessage name="noref" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                             </div>
 
@@ -201,7 +203,7 @@
                             </div>
 
                             <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
-                                <button class="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 disabled:opacity-75" :disabled="form.field.agreement ? false : true">Daftar</button>
+                                <button class="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500 disabled:opacity-75" :disabled="!form.field.agreement || referenceStatus !== 'valid' || referenceChecking">Daftar</button>
                             </div>
                         </form>
                     </VeeForm>
@@ -380,6 +382,11 @@ export default {
             open: false,
             open_finish: false,
             search: '',
+            referenceStatus: '',
+            referenceMessage: '',
+            referenceChecking: false,
+            referenceRequest: 0,
+            checkedReference: '',
 
             option: {
                 province: [],
@@ -422,6 +429,38 @@ export default {
     },
 
     methods: {
+        resetReference() {
+            this.referenceRequest++
+            this.referenceStatus = ''
+            this.referenceMessage = ''
+            this.referenceChecking = false
+        },
+
+        async checkReference() {
+            const code = this.form.field.noref.trim()
+            if (!code || this.referenceChecking || (this.referenceStatus === 'valid' && this.checkedReference === code)) return
+
+            const request = ++this.referenceRequest
+            this.referenceChecking = true
+            this.referenceStatus = ''
+            this.referenceMessage = 'Memeriksa kode referensi...'
+            try {
+                const response = await window.axios.post('/pendaftaran-client/periksa-referensi', { noref: code })
+                if (request !== this.referenceRequest || code !== this.form.field.noref.trim()) return
+                this.checkedReference = code
+                this.referenceStatus = response.data.valid ? 'valid' : 'invalid'
+                this.referenceMessage = response.data.valid ? 'Kode referensi distributor valid.' : 'Kode referensi distributor tidak ditemukan. Periksa kembali kode Anda.'
+                if (!response.data.valid) this.$notyf.error(this.referenceMessage)
+            } catch (e) {
+                if (request !== this.referenceRequest) return
+                this.referenceStatus = 'error'
+                this.referenceMessage = 'Kode belum dapat diperiksa. Silakan coba lagi.'
+                this.$notyf.error(this.referenceMessage)
+            } finally {
+                if (request === this.referenceRequest) this.referenceChecking = false
+            }
+        },
+
         clearForm() {
             this.form.field.name = ''
             this.form.field.email = ''
@@ -445,6 +484,7 @@ export default {
             this.form.field.logo_small = ''
             this.form.field.agreement = false
             this.form.field.noref = ''
+            this.resetReference()
 
             this.$refs.logo_big.removeFiles()
             this.$refs.logo_small.removeFiles()
@@ -563,6 +603,10 @@ export default {
         },
 
         async submit() {
+            if (this.referenceStatus !== 'valid' || this.checkedReference !== this.form.field.noref.trim()) {
+                this.$notyf.error('Periksa kode referensi distributor sebelum mendaftar.')
+                return
+            }
             let loader = this.$loading.show()
             try {
                 let form_data = new FormData()
@@ -578,9 +622,16 @@ export default {
                 loader.hide()
                 if (e.response && e.response.data && e.response.data.errors) {
                     this.$refs.form.setErrors(e.response.data.errors)
+                    if (e.response.data.errors.noref) {
+                        this.referenceStatus = 'invalid'
+                        this.referenceMessage = e.response.data.errors.noref[0]
+                        this.$notyf.error(this.referenceMessage)
+                    }
                 }
 
-                if (e.response && e.response.data && e.response.data.message) {
+                if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.noref) {
+                    return
+                } else if (e.response && e.response.data && e.response.data.message) {
                     this.$notyf.error(e.response.data.message)
                 } else {
                     this.$notyf.error(e.message || 'An error occurred.')

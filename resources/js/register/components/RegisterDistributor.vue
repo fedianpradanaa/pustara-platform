@@ -407,10 +407,11 @@
 
                                 <div class="col-span-6">
                                     <label for="noref" class="relative block rounded-md border shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600" :class="errors.noref ? 'border-red-500' : 'border-gray-200'">
-                                        <Field type="text" id="noref" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Kode Referensi" name="noref" v-model="form.field.noref" />
+                                        <Field type="text" id="noref" class="peer w-full border-none bg-transparent placeholder-transparent focus:border-transparent focus:outline-none focus:ring-0" placeholder="Kode Referensi" name="noref" v-model="form.field.noref" required minlength="6" maxlength="20" aria-describedby="distributor-reference-help" />
 
-                                        <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Kode Referensi</span>
+                                        <span class="pointer-events-none absolute start-2.5 top-0 -translate-y-1/2 bg-white p-0.5 text-xs text-gray-700 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs">Kode Referensi <span class="text-red-600">*</span></span>
                                     </label>
+                                    <p id="distributor-reference-help" class="mt-2 text-xs leading-5 text-slate-600">Buat kode unik 6–20 karakter. Kode ini akan Anda berikan kepada client untuk digunakan saat pendaftaran perpustakaan digital.</p>
                                     <ErrorMessage name="noref" class="mt-1 block text-xs text-red-600 dark:text-red-500" />
                                 </div>
 

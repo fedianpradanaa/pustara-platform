@@ -33,15 +33,39 @@ MAIL_FROM_NAME="Pustaka Nusantara"
 
 Untuk GIA, gunakan `APP_BRAND=gia`, URL platform GIA, akun `info@pustaka-gia.id`, dan `MAIL_FROM_NAME="GIA e-Library"`. Isi password secara pribadi di server, jangan simpan di Git. Pastikan `MAIL_URL` tidak menimpa pengaturan SMTP ini. Jika memakai jenis layanan lain, periksa parameter di panel penyedia. Hostinger menyediakan detail di **Emails > Manage > Connect Apps & Devices**; lihat [petunjuk Hostinger](https://www.hostinger.com/support/1575756-how-to-get-email-account-configuration-details-for-hostinger-email/).
 
-Setelah mengubah `.env`, jalankan `php artisan config:cache` dan `php artisan queue:restart`. Konfigurasikan process manager server untuk menjalankan dan menjaga worker di direktori **setiap deployment**:
+Konfigurasikan process manager server untuk menjalankan dan menjaga worker di direktori **setiap deployment**:
 
 ```bash
 php artisan queue:work database --sleep=3 --tries=5 --timeout=60
 ```
 
+### Setelah mengubah konfigurasi `.env`
+
+Jalankan perintah berikut di direktori deployment yang `.env`-nya diubah:
+
+```bash
+php artisan config:cache
+```
+
+Jika menggunakan Supervisor, restart program worker yang sesuai, lalu periksa statusnya:
+
+```bash
+supervisorctl restart gia-queue
+# atau: supervisorctl restart pustara-queue
+supervisorctl status
+```
+
+Nama program harus sesuai dengan konfigurasi Supervisor di server, dan worker harus kembali berstatus `RUNNING`. Ulangi langkah ini di kedua deployment jika `.env` keduanya diubah. Jangan simpan password `.env` di Git.
+
 Antrean email memakai koneksi database aplikasi dan tabel `jobs`. Tanpa worker, email tidak akan terkirim. Email yang gagal dicoba ulang hingga lima kali; periksa `php artisan queue:failed` dan gunakan `php artisan queue:retry <id>` setelah masalah SMTP diperbaiki. Email verifikasi supplier/distributor juga menggunakan antrean. `APP_URL` harus benar agar tautan verifikasi mengarah ke platform yang sesuai.
 
 Pendaftaran client lama tanpa email tetap dapat diproses, tetapi admin menerima peringatan bahwa email status tidak dikirim. Pemberitahuan pendaftaran client baru dikirim setelah data tersimpan; persetujuan awal oleh distributor belum merupakan persetujuan akhir admin.
+
+### Lupa password supplier dan distributor
+
+Supplier dan distributor dapat memilih **Lupa password?** di halaman masuk. Tautan reset dikirim melalui antrean database yang sama; worker dan SMTP pada deployment terkait harus aktif. Tautan berlaku 60 menit dan hanya dapat digunakan sekali. Setelah mengubah password, pengguna masuk kembali melalui halaman login. Akun client tidak menggunakan alur reset platform ini.
+
+Kode referensi client harus cocok dengan `noref` perusahaan bertipe distributor (`tcompany.type = 2`) pada database deployment terkait. Distributor menentukan kode unik saat mendaftar dan memberikannya kepada client.
 
 ## About Laravel
 

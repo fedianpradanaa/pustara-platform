@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class RegisterClientController extends Controller
 {
@@ -52,6 +54,15 @@ class RegisterClientController extends Controller
     public function showRegistrationForm()
     {
         return view('auth.register');
+    }
+
+    public function checkReference(Request $request): JsonResponse
+    {
+        $request->validate(['noref' => ['required', 'string', 'max:20']]);
+
+        return response()->json([
+            'valid' => DB::table('tcompany')->where('type', '2')->where('noref', $request->noref)->exists(),
+        ]);
     }
 
     /**
@@ -114,7 +125,9 @@ class RegisterClientController extends Controller
             'logo_big' => ['required', 'mimes:png', 'max:1000'],
             'logo_small' => ['required', 'mimes:png', 'max:1000'],
             'agreement' => ['required'],
-            'noref' => ['required', 'string', 'exists:tcompany,noref'],
+            'noref' => ['required', 'string', 'max:20', Rule::exists('tcompany', 'noref')->where('type', '2')],
+        ], [
+            'noref.exists' => 'Kode referensi distributor tidak ditemukan. Periksa kembali kode Anda.',
         ]);
     }
 
@@ -131,7 +144,12 @@ class RegisterClientController extends Controller
 
         $ref = DB::table('tcompany as a')->sharedLock()
             ->where('a.noref', $request->noref)
-            ->firstOrFail(['a.id']);
+            ->where('a.type', '2')
+            ->first(['a.id']);
+
+        if (! $ref) {
+            throw ValidationException::withMessages(['noref' => 'Kode referensi distributor tidak ditemukan. Periksa kembali kode Anda.']);
+        }
 
         if (! $request->file('logo_big')->storeAs('images/logo', $logoBigName, 'public')
             || ! $request->file('logo_small')->storeAs('images/logo', $logoSmallName, 'public')) {

@@ -46,11 +46,15 @@
                         </label>
                     </div>
 
+                    <div class="text-right">
+                        <a href="/password/reset" class="text-sm font-semibold text-blue-700 underline hover:text-blue-900">Lupa password?</a>
+                    </div>
                     <button type="submit" class="block w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white">Masuk</button>
 
                     <p class="text-center text-sm text-gray-500">
-                        Belum punya akun Supplier?
-                        <a class="underline" href="/pendaftaran-supplier">Daftar</a>
+                        Belum punya akun?
+                        <a class="underline" href="/pendaftaran-supplier">Daftar supplier</a> atau
+                        <a class="underline" href="/pendaftaran-distributor">distributor</a>
                     </p>
                 </form>
             </VeeForm>
