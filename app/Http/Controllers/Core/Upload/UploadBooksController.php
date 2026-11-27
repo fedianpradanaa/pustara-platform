@@ -214,14 +214,12 @@ class UploadBooksController extends Controller
                 }
 
                 $locations = $value->status != '1' && $value->status != '2' && $value->status != '5'
-                    ? ['published', 'temporary']
-                    : ['temporary', 'published'];
+                    ? ['published', 'temporary', 'draft']
+                    : ['temporary', 'draft', 'published'];
                 $disk = Storage::disk('public');
 
                 foreach ($locations as $location) {
-                    $coverPath = $location === 'published'
-                        ? 'covers/'.$value->cover
-                        : 'tmp/covers_tmp/'.$value->cover;
+                    $coverPath = ['published' => 'covers/', 'temporary' => 'tmp/covers_tmp/', 'draft' => 'covers_draft/'][$location].$value->cover;
 
                     if ($disk->exists($coverPath)) {
                         return route('encrypt-books-cover', ['location' => $location, 'filename' => $value->cover]);
@@ -234,13 +232,13 @@ class UploadBooksController extends Controller
                 return $value->book_id .'|'. $value->status;
             })
             ->addColumn('file_size', function ($value) {
-                $path = $value->status != '1' && $value->status != '2' && $value->status != '5' ? 'books/' : 'tmp/books_tmp/';
-
-                if (Storage::exists($path.'/'.$value->filename)) {
-                    $fileSizeInBytes = Storage::size($path.'/'.$value->filename);
-                    $fileSizeInMB = $fileSizeInBytes / 1048576;
-                    $fileSizeInMB = number_format($fileSizeInMB, 2);
-                    return $fileSizeInMB . ' MB';
+                $paths = $value->status != '1' && $value->status != '2' && $value->status != '5'
+                    ? ['books/', 'tmp/books_tmp/', 'books_draft/']
+                    : ['tmp/books_tmp/', 'books_draft/', 'books/'];
+                foreach ($paths as $path) {
+                    if (Storage::exists($path.$value->filename)) {
+                        return number_format(Storage::size($path.$value->filename) / 1048576, 2).' MB';
+                    }
                 }
 
                 return '0 MB';
@@ -414,9 +412,7 @@ class UploadBooksController extends Controller
                         'category_id' => $value->category_id ?? '',
                         'publisher_id' => $value->publisher_id ?? '',
                         'book_format_id' => $value->book_format_id ?? '',
-                        'path_cover' => $value->cover && Storage::disk('public')->exists('tmp/covers_tmp/'.$value->cover)
-                            ? route('encrypt-books-cover', ['location' => 'temporary', 'filename' => $value->cover])
-                            : ''
+                        'path_cover' => $this->draftCoverUrl($value->cover)
                     ];
                 });
 
@@ -628,9 +624,7 @@ class UploadBooksController extends Controller
                                 'cover' => $value->cover ?? '',
                                 'age' => $value->age ?? '',
                                 'status' => $value->status ?? '',
-                                'path_cover' => $value->cover && Storage::disk('public')->exists('tmp/covers_tmp/'.$value->cover)
-                                    ? route('encrypt-books-cover', ['location' => 'temporary', 'filename' => $value->cover])
-                                    : ''
+                                'path_cover' => $this->draftCoverUrl($value->cover)
                             ];
                         });
                     }
@@ -671,9 +665,7 @@ class UploadBooksController extends Controller
                                 'category_id' => $value->category_id ?? '',
                                 'publisher_id' => $value->publisher_id ?? '',
                                 'book_format_id' => $value->book_format_id ?? '',
-                                'path_cover' => $value->cover && Storage::disk('public')->exists('tmp/covers_tmp/'.$value->cover)
-                                    ? route('encrypt-books-cover', ['location' => 'temporary', 'filename' => $value->cover])
-                                    : ''
+                                'path_cover' => $this->draftCoverUrl($value->cover)
                             ];
                         });
                     }
@@ -1147,6 +1139,9 @@ class UploadBooksController extends Controller
         if (Storage::exists('books/'. str_replace('&amp;', '&', $request->file))) {
             $filePath = 'books/'.$request->file;
             $fileContent = Storage::get($filePath);
+        } elseif (Storage::exists('books_draft/'.$request->file)) {
+            $filePath = 'books_draft/'.$request->file;
+            $fileContent = Storage::get($filePath);
         } else {
             $filePath = 'tmp/books_tmp/'.$request->file;
             $fileContent = Storage::get($filePath);
@@ -1159,5 +1154,20 @@ class UploadBooksController extends Controller
             'Content-Disposition'   => 'attachment; filename="' . basename($filePath) . '"',
             'Pragma'                => 'public',
         ]);
+    }
+
+    private function draftCoverUrl(?string $filename): string
+    {
+        if (!$filename) {
+            return '';
+        }
+
+        foreach (['temporary' => 'tmp/covers_tmp/', 'draft' => 'covers_draft/'] as $location => $path) {
+            if (Storage::disk('public')->exists($path.$filename)) {
+                return route('encrypt-books-cover', ['location' => $location, 'filename' => $filename]);
+            }
+        }
+
+        return '';
     }
 }

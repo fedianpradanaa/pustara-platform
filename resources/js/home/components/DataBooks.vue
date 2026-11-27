@@ -24,7 +24,7 @@
                                     </svg>
                                 </span>
 
-                                <span class="text-sm font-medium transition-all group-hover:ms-4"> Upload Enkripsi File </span>
+                                <span class="text-sm font-medium transition-all group-hover:ms-4"> Upload Audio / Video </span>
                             </button>
                             <button class="group relative inline-flex items-center overflow-hidden rounded bg-emerald-500 px-8 py-3 text-white focus:outline-none focus:ring active:bg-emerald-500" @click="onDraft">
                                 <span class="absolute -start-full transition-all group-hover:start-4">
@@ -37,16 +37,7 @@
                                     </svg>
                                 </span>
 
-                                <span class="text-sm font-medium transition-all group-hover:ms-4"> Pengajuan buku </span>
-                            </button>
-                            <button class="group relative inline-flex items-center overflow-hidden rounded bg-emerald-500 px-8 py-3 text-white focus:outline-none focus:ring active:bg-emerald-500" @click="exportData">
-                                <span class="absolute -start-full transition-all group-hover:start-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                    </svg>
-                                </span>
-
-                                <span class="text-sm font-medium transition-all group-hover:ms-4"> Export Buku </span>
+                                <span class="text-sm font-medium transition-all group-hover:ms-4"> Pengajuan Audio / Video </span>
                             </button>
                         </div>
                     </div>
@@ -234,12 +225,13 @@
 
                     <VeeForm ref="form" v-slot="{ handleSubmit }" as="div">
                         <form @submit.prevent="handleSubmit($event, submit)">
+                            <button type="button" class="mt-4 rounded bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600" @click="downloadTemplate">Download Template Excel</button>
+                            <p class="mt-2 text-xs text-gray-500">Isi kolom FILENAME dengan nama file audio/video beserta ekstensinya. Nama cover JPG harus sama dengan nama file tanpa ekstensi.</p>
                             <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
                                 <div class="flex flex-col justify-start gap-2">
                                     <label for="type" class="block text-sm font-bold text-gray-900"> Pilih File yang di Upload : </label>
-                                    <Field as="select" rules="required" name="type" id="type" class="relative w-full rounded-md border-gray-300 text-gray-700 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 sm:text-sm" v-model="form.field.type" @change="clearForm">
+                                    <Field as="select" rules="required" name="type" id="type" class="relative w-full rounded-md border-gray-300 text-gray-700 shadow-sm focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 sm:text-sm" v-model="form.field.type" @change="clearFiles">
                                         <option value="">--</option>
-                                        <option value="B">Buku</option>
                                         <option value="A">Audio</option>
                                         <option value="V">Video</option>
                                     </Field>
@@ -250,7 +242,7 @@
                                     <file-pond
                                         name="file"
                                         ref="file"
-                                        label-idle='<div class="flex justify-center gap-1 items-center"><div class="p-3 items-center"><svg class="size-8 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/></svg></div><div>Upload file Enkripsi (.zip)...</div></div>'
+                                        label-idle="Upload file Audio / Video (.zip)..."
                                         :allow-multiple="false"
                                         accepted-file-types="zip,application/zip,application/x-zip,application/x-zip-compressed"
                                         label-file-type-not-allowed="Hanya file .zip yang diperbolehkan."
@@ -262,7 +254,7 @@
                                         style-class="custom-filepond"
                                         :disabled="!form.field.type"
                                     />
-                                    <dt class="text-xs font-medium text-slate-500"><span class="text-red-500">*</span> File <span class="text-red-500">.Zip hasil Enkripsi dengan nama file file_</span>.</dt>
+                                    <dt class="text-xs font-medium text-slate-500"><span class="text-red-500">*</span> ZIP audio/video dengan nama diawali <span class="text-red-500">file_</span>.</dt>
                                 </div>
                                 <div class="flex h-32 flex-col justify-between rounded-md border p-2 font-[sans-serif] shadow-sm">
                                     <file-pond
@@ -280,7 +272,7 @@
                                         style-class="custom-filepond"
                                         :disabled="!form.field.type"
                                     />
-                                    <dt class="text-xs font-medium text-slate-500"><span class="text-red-500">*</span> File <span class="text-red-500">.Zip hasil Enkripsi dengan nama file cover_</span>.</dt>
+                                    <dt class="text-xs font-medium text-slate-500"><span class="text-red-500">*</span> ZIP cover dengan nama diawali <span class="text-red-500">cover_</span>.</dt>
                                 </div>
                                 <div class="flex h-32 flex-col justify-between rounded-md border p-2 font-[sans-serif] shadow-sm">
                                     <file-pond
@@ -298,7 +290,7 @@
                                         style-class="custom-filepond"
                                         :disabled="!form.field.type"
                                     />
-                                    <dt class="text-xs font-medium text-slate-500"><span class="text-red-500">*</span> File <span class="text-red-500">.xlsx hasil Enkripsi</span>.</dt>
+                                    <dt class="text-xs font-medium text-slate-500"><span class="text-red-500">*</span> Excel dengan nama diawali <span class="text-red-500">detail_</span>.</dt>
                                 </div>
                             </div>
                         </form>
@@ -314,7 +306,7 @@
                                     </svg>
                                 </span>
 
-                                <span class="text-sm font-medium transition-all group-hover:ms-4"> Ajukan Buku </span>
+                                <span class="text-sm font-medium transition-all group-hover:ms-4"> Ajukan Audio / Video </span>
                             </button>
                             <button class="group relative inline-flex items-center overflow-hidden rounded bg-rose-500 px-8 py-3 text-white focus:outline-none focus:ring active:bg-rose-500" @click="cancelReview">
                                 <span class="absolute -start-full transition-all group-hover:start-4">
@@ -752,15 +744,18 @@ export default {
         clearForm() {
             this.form.submitted = false
 
-            this.form.field.file = ''
-            this.form.field.cover = ''
-            this.form.field.excel = ''
-
+            this.clearFiles()
             this.form.field.type = ''
             this.form.field.success = []
             this.form.field.exists = []
             this.form.field.failed = []
             this.selectedRows = []
+        },
+
+        clearFiles() {
+            this.form.field.file = ''
+            this.form.field.cover = ''
+            this.form.field.excel = ''
 
             this.$refs.file.removeFiles()
             this.$refs.cover.removeFiles()
@@ -778,7 +773,7 @@ export default {
                     },
                 })
                 .then((response) => {
-                    this.data = response.data.data
+                    this.data = response.data.data.filter((row) => row.type === 'A' || row.type === 'V')
 
                     loader.hide()
                 })
@@ -1015,6 +1010,11 @@ export default {
         },
 
         submit() {
+            if (!['A', 'V'].includes(this.form.field.type)) {
+                this.$notyf.error('Pilih Audio atau Video.')
+                return
+            }
+
             this.form.submit_count += 1
             if (this.form.submit_count === 1) {
                 let loader = this.$loading.show()
@@ -1051,12 +1051,12 @@ export default {
                     .catch((e) => {
                         this.form.submit_count = 0
 
-                        this.clearForm()
-
                         loader.hide()
-                        Object.keys(e.response.data.errors).forEach((key) => {
-                            this.$notyf.error(`${e.response.data.errors[key]}`)
-                        })
+                        if (e.response && e.response.data && e.response.data.errors) {
+                            Object.values(e.response.data.errors).forEach((messages) => this.$notyf.error(messages.join(', ')))
+                        } else {
+                            this.$notyf.error(e.response?.data?.message || e.message || 'Upload gagal.')
+                        }
                     })
             }
         },
@@ -1097,24 +1097,20 @@ export default {
             }
         },
 
-        async exportData() {
-            await window
-                .axios({
-                    url: '/upload/encrypt-books-excel/export-data',
-                    method: 'POST',
-                    responseType: 'blob',
-                })
-                .then((response) => {
-                    const url = window.URL.createObjectURL(new Blob([response.data]))
-                    const link = document.createElement('a')
-                    link.href = url
-                    link.setAttribute('download', 'data_buku.xlsx')
-                    document.body.appendChild(link)
-                    link.click()
-                })
-                .catch((e) => {
-                    console.log(e.response.data)
-                })
+        async downloadTemplate() {
+            try {
+                const response = await window.axios.post('/upload/encrypt-files-download/export-tpl', { data: [] }, { responseType: 'blob' })
+                const url = window.URL.createObjectURL(response.data)
+                const link = document.createElement('a')
+                link.href = url
+                link.download = 'detail_data.xlsx'
+                document.body.appendChild(link)
+                link.click()
+                link.remove()
+                window.URL.revokeObjectURL(url)
+            } catch (e) {
+                this.$notyf.error(e.message || 'Gagal mengunduh template Excel.')
+            }
         },
 
         async downloadFile(param, file) {

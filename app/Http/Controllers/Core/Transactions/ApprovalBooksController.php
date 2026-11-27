@@ -190,14 +190,12 @@ class ApprovalBooksController extends Controller
                 }
 
                 $locations = $value->status != '1' && $value->status != '2' && $value->status != '5'
-                    ? ['published', 'temporary']
-                    : ['temporary', 'published'];
+                    ? ['published', 'temporary', 'draft']
+                    : ['temporary', 'draft', 'published'];
                 $disk = Storage::disk('public');
 
                 foreach ($locations as $location) {
-                    $coverPath = $location === 'published'
-                        ? 'covers/'.$value->cover
-                        : 'tmp/covers_tmp/'.$value->cover;
+                    $coverPath = ['published' => 'covers/', 'temporary' => 'tmp/covers_tmp/', 'draft' => 'covers_draft/'][$location].$value->cover;
 
                     if ($disk->exists($coverPath)) {
                         return route('encrypt-books-cover', ['location' => $location, 'filename' => $value->cover]);
@@ -210,13 +208,13 @@ class ApprovalBooksController extends Controller
                 return $value->book_id .'|'. $value->status;
             })
             ->addColumn('file_size', function ($value) {
-                $path = $value->status != '1' && $value->status != '2' && $value->status != '5' ? 'books/' : 'tmp/books_tmp/';
-
-                if (Storage::exists($path.'/'.$value->filename)) {
-                    $fileSizeInBytes = Storage::size($path.'/'.$value->filename);
-                    $fileSizeInMB = $fileSizeInBytes / 1048576;
-                    $fileSizeInMB = number_format($fileSizeInMB, 2);
-                    return $fileSizeInMB . ' MB';
+                $paths = $value->status != '1' && $value->status != '2' && $value->status != '5'
+                    ? ['books/', 'tmp/books_tmp/', 'books_draft/']
+                    : ['tmp/books_tmp/', 'books_draft/', 'books/'];
+                foreach ($paths as $path) {
+                    if (Storage::exists($path.$value->filename)) {
+                        return number_format(Storage::size($path.$value->filename) / 1048576, 2).' MB';
+                    }
                 }
 
                 return '0 MB';
@@ -286,14 +284,16 @@ class ApprovalBooksController extends Controller
                         $files = [
                             [
                                 'disk' => 'local',
-                                'source' => 'tmp/books_tmp/'.$draft->filename,
+                                'source' => Storage::disk('local')->exists('tmp/books_tmp/'.$draft->filename)
+                                    ? 'tmp/books_tmp/'.$draft->filename : 'books_draft/'.$draft->filename,
                                 'destination' => 'books/'.$draft->filename,
                                 'label' => 'book file',
                                 'name' => $draft->filename,
                             ],
                             [
                                 'disk' => 'public',
-                                'source' => 'tmp/covers_tmp/'.$draft->cover,
+                                'source' => Storage::disk('public')->exists('tmp/covers_tmp/'.$draft->cover)
+                                    ? 'tmp/covers_tmp/'.$draft->cover : 'covers_draft/'.$draft->cover,
                                 'destination' => 'covers/'.$draft->cover,
                                 'label' => 'book cover',
                                 'name' => $draft->cover,
@@ -585,6 +585,9 @@ class ApprovalBooksController extends Controller
         if (Storage::exists('books/'. str_replace('&amp;', '&', $request->file))) {
             $filePath = 'books/'.$request->file;
             $fileContent = Storage::get($filePath);
+        } elseif (Storage::exists('books_draft/'.$request->file)) {
+            $filePath = 'books_draft/'.$request->file;
+            $fileContent = Storage::get($filePath);
         } else {
             $filePath = 'tmp/books_tmp/'.$request->file;
             $fileContent = Storage::get($filePath);
@@ -608,6 +611,9 @@ class ApprovalBooksController extends Controller
     {
         if (Storage::exists('books/'. str_replace('&amp;', '&', $request->file))) {
             $filePath = 'books/'. str_replace('&amp;', '&', $request->file);
+            $filename = explode('.', basename($filePath))[0];
+        } elseif (Storage::exists('books_draft/'. str_replace('&amp;', '&', $request->file))) {
+            $filePath = 'books_draft/'. str_replace('&amp;', '&', $request->file);
             $filename = explode('.', basename($filePath))[0];
         } else {
             $filePath = 'tmp/books_tmp/'. str_replace('&amp;', '&', $request->file);
