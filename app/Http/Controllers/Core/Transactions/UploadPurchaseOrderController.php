@@ -9,6 +9,7 @@ use App\Logs;
 use App\Exports\Transactions\UploadPOExport;
 use App\Exports\Transactions\UploadPODetailExport;
 use App\Http\Controllers\Controller;
+use App\Services\PurchaseOrderWorkflow;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -139,6 +140,16 @@ class UploadPurchaseOrderController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        abort_unless(in_array((string) $request->user()->role, ['0', '2'], true), 403);
+        $request->validate([
+            'params.param' => 'required|in:distributor,type',
+            'params.client_id' => 'required|string',
+            'params.po_number' => 'required|string',
+            'params.po_date' => 'required|date',
+            'params.distributor_id' => 'required_if:params.param,distributor',
+            'params.po_type' => 'required_if:params.param,type|in:1,2',
+        ]);
+        abort_if($request->params['param'] === 'distributor' && (string) $request->user()->role !== '0', 403);
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
@@ -153,6 +164,10 @@ class UploadPurchaseOrderController extends Controller
                 ->where('client_id', $request->params['client_id'])
                 ->where('po_number', $request->params['po_number'])
                 ->where('po_date', $request->params['po_date'])
+                ->whereIn('status', ['0', '1'])
+                ->when((string) $request->user()->role === '2', function ($query) use ($request) {
+                    $query->where('distributor_id', $request->user()->client_id);
+                })
                 ->update($param);
 
             if ($updated) {
@@ -207,7 +222,7 @@ class UploadPurchaseOrderController extends Controller
                         )
                         ->join('tcompany as b', function($join) {
                             $join->on('a.supplier_id', '=', 'b.id')
-                                ->on('b.type', '=', DB::raw("'1'"));
+                                ->whereIn('b.type', ['1', '3']);
                         })
                         ->leftJoin('tpublisher as c', function($join) {
                             $join->on('a.supplier_id', '=', 'c.client_id') 
@@ -307,7 +322,7 @@ class UploadPurchaseOrderController extends Controller
                         )
                         ->join('tcompany as b', function($join) {
                             $join->on('a.supplier_id', '=', 'b.id')
-                                ->on('b.type', '=', DB::raw("'1'"));
+                                ->whereIn('b.type', ['1', '3']);
                         });
 
                     $detail = DB::table('tpo_detail as a')->sharedLock()
@@ -484,109 +499,52 @@ class UploadPurchaseOrderController extends Controller
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
-        $result['status'] = 200;
-        $result['message'] = '';
-
-        if ($id === '2' && (int) $request->user()->role !== 0) {
-            return response()->json('Forbidden', 403);
-        }
-
-        try {
-            DB::enableQueryLog();
-
-            $updated = DB::table('tpo_header')
+        abort_unless(in_array($id, ['1', '2', '3'], true), 422);
+        abort_unless($id === '1' || (string) $request->user()->role === '0', 403);
+        $request->validate([
+            'client_id' => 'required|string',
+            'po_number' => 'required|string',
+            'po_date' => 'required|date',
+        ]);
+        DB::transaction(function () use ($request, $id) {
+            $order = DB::table('tpo_header')
                 ->where('client_id', $request->client_id)
                 ->where('po_number', $request->po_number)
                 ->where('po_date', $request->po_date)
-                ->update([
-                    'status' => $id
-                ]);
-
-            if ($updated) {
-                $logs->write("INFO", "Successfully updated");
-                $result['status'] = 201;
-                $result['message'] = "Successfully updated.";
-
-                if ($id == '2') {
-                    $detailMap = DB::table('tpo_detail as a')->sharedLock()
-                        ->select(
-                            'a.client_id as client_id',
-                            'a.po_number as po_number',
-                            'a.book_id as book_id',
-                            'a.qty as qty'
-                        )
-                        ->where('a.client_id', $request->client_id)
-                        ->where('a.po_number', $request->po_number)
-                        ->where('a.po_date', $request->po_date)
-                        ->distinct()
-                        ->get();
-
-                    foreach ($detailMap as $i => $value) {
-                        $mapping = DB::table('tmapping_book')->insert([
-                            'client_id' => $value->client_id,
-                            'po_number' => $value->po_number,
-                            'book_id' => $value->book_id,
-                            'copy' => $value->qty,
-                            'created_at' => Carbon::now('Asia/Jakarta'),
-                            'updated_at' => Carbon::now('Asia/Jakarta'),
-                        ]);
-                    }                    
-                }
-
-                if ($id == '3') {
-                    $tbook = DB::table('tbook as a')->sharedLock()
-                        ->select(
-                            'a.*',
-                            'b.name'
-                        )
-                        ->join('tcompany as b', function($join) {
-                            $join->on('a.supplier_id', '=', 'b.id')
-                                ->on('b.type', '=', DB::raw("'1'"));
-                        });
-
-                    $detail = DB::table('tpo_detail as a')->sharedLock()
-                        ->select(
-                            'b.supplier_id as supplier_id',
-                        )
-                        ->joinSub($tbook, 'b', function($join) {
-                            $join->on('a.book_id', '=', 'b.book_id');
-                        })
-                        ->where('a.client_id', $request->client_id)
-                        ->where('a.po_number', $request->po_number)
-                        ->where('a.po_date', $request->po_date)
-                        ->distinct()
-                        ->get();
-
-                    foreach ($detail as $i => $value) {
-                        $paid = DB::table('tpo_paid_off')->insert([
-                            'supplier_id' => $value->supplier_id,
-                            'client_id' => $request->client_id,
-                            'po_number' => $request->po_number,
-                            'po_date' => $request->po_date,
-                            'payment_image' => '',
-                            'created_at' => Carbon::now('Asia/Jakarta'),
-                            'created_by' => auth()->user()->email,
-                        ]);
-                    }
+                ->lockForUpdate()->first();
+            abort_unless($order, 404, 'PO tidak ditemukan.');
+            if ($id === '1') {
+                abort_unless((string) $request->user()->role === '2'
+                    && $request->user()->client_id === $order->distributor_id
+                    && (string) $order->status === '0', 403);
+            } elseif ($id === '2') {
+                abort_unless(in_array((string) $order->status, ['0', '1'], true), 409, 'PO tidak menunggu persetujuan.');
+                app(PurchaseOrderWorkflow::class)->mapBooks($order);
+                if ((string) $order->po_type === '2') {
+                    DB::table('tpo_detail')->where('client_id', $order->client_id)
+                        ->where('po_number', $order->po_number)->where('po_date', $order->po_date)
+                        ->update(['sellprice' => 0]);
+                    app(PurchaseOrderWorkflow::class)->sendToSuppliers($order, $request->user()->email);
                 }
             } else {
-                $result['status'] = 500;
-                $result['message'] = "Failed updated.";
+                abort_unless((string) $order->status === '2', 409, 'PO belum disetujui atau sudah dikirim.');
+                if ((string) $order->po_type === '2') {
+                    DB::table('tpo_detail')->where('client_id', $order->client_id)
+                        ->where('po_number', $order->po_number)->where('po_date', $order->po_date)
+                        ->update(['sellprice' => 0]);
+                }
+                app(PurchaseOrderWorkflow::class)->sendToSuppliers($order, $request->user()->email);
             }
-
-            $queries = DB::getQueryLog();
-            for ($q = 0; $q < count($queries); $q++) {
-                $logs->write('BINDING', '[' . implode(', ', $queries[$q]['bindings']) . ']');
-                $logs->write('SQL', $queries[$q]['query']);
+            $updates = ['status' => $id === '2' && (string) $order->po_type === '2' ? '3' : $id];
+            if ($id !== '1' && (string) $order->po_type === '2') {
+                $updates += ['po_amount' => 0, 'po_discount' => 0, 'persentase_supplier' => 0];
             }
-        } catch (Throwable $th) {
-            $logs->write("ERROR", $th->getMessage());
-
-            $result['status'] = 500;
-            $result['message'] = "Failed updated.<br>" . $th->getMessage();
-        }
-
-        return response()->json($result['message'], $result['status']);
+            DB::table('tpo_header')->where('client_id', $order->client_id)
+                ->where('po_number', $order->po_number)->where('po_date', $order->po_date)
+                ->update($updates);
+        });
+        $logs->write("INFO", "Successfully updated");
+        return response()->json('Successfully updated.', 201);
     }
 
     /**
@@ -597,49 +555,28 @@ class UploadPurchaseOrderController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
-        $logs->write(__FUNCTION__, 'START');
-
+        abort_unless((string) auth()->user()->role === '0', 403);
         $filter['po_number'] = explode('|', $id)[0] ?? '';
         $filter['client_id'] = explode('|', $id)[1] ?? '';
         $filter['po_date'] = explode('|', $id)[2] ?? '';
 
-        $result['status'] = 200;
-        $result['message'] = '';
-        try {
-            DB::enableQueryLog();
-
+        DB::transaction(function () use ($filter) {
+            $order = DB::table('tpo_header')
+                ->where('client_id', $filter['client_id'])
+                ->where('po_number', $filter['po_number'])
+                ->where('po_date', $filter['po_date'])->lockForUpdate()->first();
+            abort_unless($order, 404, 'PO tidak ditemukan.');
+            abort_unless((string) $order->status === '2' && (string) $order->po_type === '1', 409, 'Hanya PO pembelian yang belum dikirim dapat ditarik.');
             $deleted = DB::table('tmapping_book')
                 ->where('client_id', $filter['client_id'])
                 ->where('po_number', $filter['po_number'])
                 ->delete();
-
-            $queries = DB::getQueryLog();
-            for ($q = 0; $q < count($queries); $q++) {
-                $logs->write('BINDING', '[' . implode(', ', $queries[$q]['bindings']) . ']');
-                $logs->write('SQL', $queries[$q]['query']);
-            }
-
-            if ($deleted) {
-                $logs->write("INFO", "PO berhasil ditarik");
-                $result['message'] = 'PO berhasil ditarik';
-
-                $updated = DB::table('tpo_header')
-                    ->where('client_id', $filter['client_id'])
-                    ->where('po_number', $filter['po_number'])
-                    ->where('po_date', $filter['po_date'])
-                    ->update([
-                        'status' => '5'
-                    ]);
-            }
-        } catch (Throwable $th) {
-            $logs->write("ERROR", $th->getMessage());
-
-            $result['message'] = 'PO gagal ditarik.<br>' . $th->getMessage();
-        }
-        $logs->write(__FUNCTION__, "STOP\r\n");
-
-        return response()->json($result['message'], $result['status']);
+            abort_if(!$deleted, 409, 'Mapping PO tidak ditemukan.');
+            DB::table('tpo_header')->where('client_id', $filter['client_id'])
+                ->where('po_number', $filter['po_number'])->where('po_date', $filter['po_date'])
+                ->update(['status' => '5']);
+        });
+        return response()->json('PO berhasil ditarik');
     }
 
     /**
@@ -712,6 +649,15 @@ class UploadPurchaseOrderController extends Controller
             DB::enableQueryLog();
 
             $collect_exists_data = collect($data_excel['exists'])->collapse()->all();
+            $collect_new_data = collect($data_excel['new'])->collapse()->all();
+            DB::beginTransaction();
+            $bookIds = collect($collect_exists_data)->merge($collect_new_data)->pluck('bookId')->unique()->sort()->values()->all();
+            $books = DB::table('tbook')->whereIn('book_id', $bookIds)->orderBy('book_id')->lockForUpdate()->get();
+            $unavailable = $books->filter(fn ($book) => !$book->is_available || $book->is_editing)->pluck('book_id')->all();
+            if ($unavailable) {
+                DB::rollBack();
+                return response()->json(['status' => 422, 'message' => 'Buku tidak tersedia untuk penjualan: '.implode(', ', $unavailable)], 422);
+            }
             if (count($collect_exists_data) > 0) {
                 $deleteHdr = DB::table('tpo_header')->whereIn('po_number', collect($collect_exists_data)->pluck('noPo')->unique()->values()->all())->delete();
                 $deleteDtl = DB::table('tpo_detail')->whereIn('po_number', collect($collect_exists_data)->pluck('noPo')->unique()->values()->all())->delete();
@@ -758,7 +704,6 @@ class UploadPurchaseOrderController extends Controller
                 }
             }
 
-            $collect_new_data = collect($data_excel['new'])->collapse()->all();
             foreach ($collect_new_data as $i => $value) {
                 $book = DB::table('tbook')->sharedLock()->where('book_id', $value['bookId'])->first();
 
@@ -805,6 +750,7 @@ class UploadPurchaseOrderController extends Controller
 
             $result['status'] = 201;
             $result['message'][] = "Successfully uploaded PO";
+            DB::commit();
 
             $queries = DB::getQueryLog();
             for($q = 0; $q < count($queries); $q++) {
@@ -813,8 +759,12 @@ class UploadPurchaseOrderController extends Controller
                 $logs->write('SQL', $sql);
             }
         } catch (Throwable $th) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             $logs->write("ERROR", $th->getMessage());
 
+            $result['status'] = 500;
             $result['message'][] = "Failed upload file.<br>". $th->getMessage();
         }
         $logs->write(__FUNCTION__, "STOP\r\n");

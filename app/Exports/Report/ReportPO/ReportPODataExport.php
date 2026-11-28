@@ -116,7 +116,7 @@ class ReportPODataExport implements WithCustomStartCell, WithEvents
                     )
                     ->join('tcompany as b', function($join) {
                         $join->on('a.supplier_id', '=', 'b.id')
-                            ->on('b.type', '=', DB::raw("'1'"));
+                            ->whereIn('b.type', ['1', '3']);
                     });
 
                 $detail = DB::table('tpo_detail as a')->sharedLock()
@@ -187,7 +187,7 @@ class ReportPODataExport implements WithCustomStartCell, WithEvents
                 $total_nett = 0;
                 foreach ($data as $i => $value) {
                     $nett = ($value->persentase_supplier != 0) ? $value->po_amount * ($value->persentase_supplier / 100) : $value->po_amount;
-                    $status = $value->status == '4' ? 'Lunas' : 'Belum Lunas';
+                    $status = $value->po_type == '2' ? 'Hibah dikirim' : ($value->status == '4' ? 'Lunas' : 'Belum Lunas');
 
                     $event->sheet->styleCells('D'. $row_cell, [
                         'alignment' => [

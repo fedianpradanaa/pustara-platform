@@ -42,7 +42,7 @@
                         </button>
                     </template>
                     <template v-else-if="form.encrypt">
-                        <button class="group relative inline-flex items-center overflow-hidden rounded bg-indigo-500 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500" @click.prevent="submit">
+                        <button class="group relative inline-flex items-center overflow-hidden rounded bg-indigo-500 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500 disabled:opacity-50" :disabled="uploadProgress.active" @click.prevent="submit">
                             <span class="absolute -start-full transition-all group-hover:start-4">
                                 <svg class="size-5 rtl:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -51,7 +51,7 @@
 
                             <span class="text-sm font-medium transition-all group-hover:ms-4"> Proses </span>
                         </button>
-                        <button class="group relative inline-flex items-center overflow-hidden rounded bg-red-500 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500" @click="cancelEncrypt">
+                        <button class="group relative inline-flex items-center overflow-hidden rounded bg-red-500 px-8 py-3 text-white focus:outline-none focus:ring active:bg-indigo-500 disabled:opacity-50" :disabled="uploadProgress.active" @click="cancelEncrypt">
                             <span class="absolute -start-full transition-all group-hover:start-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
@@ -128,7 +128,38 @@
             </div>
         </div>
         <div class="flex flex-grow flex-col p-6">
-            <div class="tabs-container">
+            <form v-if="form.revision" class="space-y-4" @submit.prevent="submitRevision">
+                <h2 class="text-lg font-semibold">Ajukan perubahan buku</h2>
+                <p class="text-sm text-gray-600">Buku tidak dapat dijual selama perubahan menunggu persetujuan. Client yang sudah memiliki buku tetap dapat membaca versi yang sudah terbit.</p>
+                <div class="grid gap-4 md:grid-cols-2">
+                    <label v-for="field in revisionFields" :key="field.key" class="block text-sm font-medium text-gray-700">
+                        {{ field.label }}
+                        <textarea v-if="field.key === 'sinopsis'" v-model="revision[field.key]" required class="mt-1 w-full rounded border-gray-300"></textarea>
+                        <input v-else v-model="revision[field.key]" :type="field.type || 'text'" :step="field.type === 'number' ? 'any' : undefined" required class="mt-1 w-full rounded border-gray-300" />
+                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Penerbit
+                        <select v-model="revision.publisher_id" required class="mt-1 w-full rounded border-gray-300">
+                            <option value="">Pilih Penerbit</option>
+                            <option v-for="option in options.publisher" :key="option.id" :value="option.id">{{ option.name }}</option>
+                        </select>
+                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Kategori
+                        <select v-model="revision.category_id" required class="mt-1 w-full rounded border-gray-300">
+                            <option value="">Pilih Kategori</option>
+                            <option v-for="option in options.category" :key="option.id" :value="option.id">{{ option.name }}</option>
+                        </select>
+                    </label>
+                    <label class="block text-sm font-medium text-gray-700">Format Buku
+                        <select v-model="revision.book_format_id" class="mt-1 w-full rounded border-gray-300">
+                            <option value="">Pilih Format Buku</option>
+                            <option v-for="option in options.format" :key="option.id" :value="option.id">{{ option.name }}</option>
+                        </select>
+                    </label>
+                </div>
+                <button type="submit" :disabled="form.submitted" class="rounded bg-indigo-500 px-4 py-2 text-white disabled:opacity-50">Kirim untuk persetujuan</button>
+                <button type="button" class="ml-2 rounded bg-gray-200 px-4 py-2" @click="cancelRevision">Batal</button>
+            </form>
+            <div v-else class="tabs-container">
                 <div class="tabs flex w-48 gap-2">
                     <button class="tab-btn shrink-0 rounded-lg p-2 px-4 py-2 text-sm font-medium" :class="form.data ? 'bg-sky-100 text-sky-600' : 'text-gray-500 hover:bg-sky-50 hover:text-gray-700'">Data</button>
                     <button class="tab-btn shrink-0 rounded-lg p-2 px-4 py-2 text-sm font-medium" :class="form.encrypt ? 'bg-sky-100 text-sky-600' : 'text-gray-500 hover:bg-sky-50 hover:text-gray-700'">Enkripsi Buku</button>
@@ -284,10 +315,18 @@
                                             <template v-if="paginatedData.length > 0">
                                                 <tr v-for="row in paginatedData" :key="row.book_id" class="even:bg-gray-50 hover:bg-gray-100">
                                                     <td class="whitespace-nowrap border-b border-gray-200 px-4 py-2">
-                                                        <input v-if="row.status == '1'" type="checkbox" v-model="selectedRows" :value="row" class="size-5 rounded border-gray-300" />
+                                                        <input v-if="row.status == '1' && row.is_available == null" type="checkbox" v-model="selectedRows" :value="row" class="size-5 rounded border-gray-300" />
                                                     </td>
                                                     <td v-for="header in headers" :key="header.key" class="whitespace-nowrap border-b border-gray-200 px-4 py-2">
-                                                        <template v-if="header.key == 'path_cover'">
+                                                        <template v-if="header.key == 'actions'">
+                                                            <button v-if="row.status == '1' && row.is_available == null" type="button" class="mr-2 text-red-600 underline" @click="deleteDraft(row)">Hapus Draft</button>
+                                                            <template v-if="row.is_available != null">
+                                                                <span class="mr-2">{{ Number(row.is_editing) ? (row.status == '5' ? 'Perubahan ditolak' : 'Perubahan dalam review') : (Number(row.is_available) ? 'Dijual' : 'Tidak dijual') }}</span>
+                                                                <button v-if="!Number(row.is_editing)" type="button" class="mr-2 text-indigo-600 underline" @click="toggleAvailability(row)">{{ Number(row.is_available) ? 'Tarik Buku' : 'Aktifkan Penjualan' }}</button>
+                                                                <button v-if="row.status == '3' || (row.status == '5' && Number(row.is_editing))" type="button" class="text-indigo-600 underline" @click="editPublished(row)">Edit Atribut</button>
+                                                            </template>
+                                                        </template>
+                                                        <template v-else-if="header.key == 'path_cover'">
                                                             <img :src="row[header.key]" class="thumbnail rounded-sm" alt="covers" @click="showImages(row[header.key])" />
                                                         </template>
                                                         <template v-else-if="header.key == 'filename'">
@@ -402,10 +441,15 @@
                         <VeeForm ref="form" v-slot="{ handleSubmit }" as="div">
                             <form @submit.prevent="handleSubmit($event, submit)">
                                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
-                                    <div class="h-32 font-[sans-serif]">
+                                    <div class="min-h-32 font-[sans-serif]">
                                         <label class="mb-2 block text-base font-semibold text-red-500">UPLOAD FILE ZIP PDF BUKU UNTUK DI ENKRIPSI</label>
                                         <input type="file" class="w-full cursor-pointer rounded border bg-white text-sm font-semibold text-gray-400 file:mr-4 file:cursor-pointer file:border-0 file:bg-gray-100 file:px-4 file:py-3 file:text-gray-500 file:hover:bg-gray-200" aria-describedby="file_pdf" ref="file_pdf" id="file_pdf" name="file_pdf" @change="onChangePdf" accept=".zip" />
                                         <p class="mt-2 text-xs text-gray-400">.Zip yang di Izinkan. Ukuran maksimal file Zip 300mb & Setiap file pdf maksimal 20mb.</p>
+                                        <div v-if="uploadProgress.active" class="mt-4" role="status" aria-live="polite">
+                                            <p class="text-sm font-medium text-gray-700">{{ uploadProgress.processing ? 'ZIP terkirim. Server sedang mengekstrak, membuat cover, dan mengenkripsi buku. Jangan tutup halaman.' : `Mengirim ZIP: ${uploadProgress.percent}%` }}</p>
+                                            <progress v-if="!uploadProgress.processing" class="mt-2 w-full" :value="uploadProgress.percent" max="100">{{ uploadProgress.percent }}%</progress>
+                                            <progress v-else class="mt-2 w-full"></progress>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -739,8 +783,21 @@ export default {
             detail_sinopsis: '',
             selectedRows: [],
             selected: [],
+            uploadProgress: { active: false, processing: false, percent: 0 },
+            revision: {},
+            revisionFields: [
+                { key: 'title', label: 'Judul' }, { key: 'writer', label: 'Penulis' },
+                { key: 'isbn', label: 'ISBN' }, { key: 'eisbn', label: 'EISBN' },
+                { key: 'size', label: 'Ukuran', type: 'number' }, { key: 'year', label: 'Tahun' },
+                { key: 'volume', label: 'Jilid', type: 'number' }, { key: 'edition', label: 'Edisi', type: 'number' },
+                { key: 'page', label: 'Halaman', type: 'number' }, { key: 'sinopsis', label: 'Sinopsis' },
+                { key: 'sellprice', label: 'Harga Jual', type: 'number' }, { key: 'rentprice', label: 'Harga Pinjam', type: 'number' },
+                { key: 'retailprice', label: 'Harga Retail', type: 'number' }, { key: 'city', label: 'Kota' },
+                { key: 'age', label: 'Umur', type: 'number' },
+            ],
 
             headers: [
+                { label: 'aksi / penjualan', key: 'actions' },
                 { label: 'cover', key: 'path_cover' },
                 { label: 'judul', key: 'title' },
                 { label: 'file', key: 'filename' },
@@ -785,6 +842,7 @@ export default {
                 upload: false,
                 review: false,
                 cancel: false,
+                revision: false,
 
                 field: {
                     file_cover: '',
@@ -806,8 +864,63 @@ export default {
     },
 
     methods: {
+        async deleteDraft(row) {
+            if (!window.confirm('Hapus draft buku ini beserta file dan cover-nya?')) return
+            try {
+                const response = await window.axios.delete('/upload/book-management/' + encodeURIComponent(row.book_id))
+                this.$notyf.success(response.data.message)
+                this.getData()
+            } catch (e) {
+                this.$notyf.error(e.response?.data?.message || e.message)
+                this.getData()
+            }
+        },
+
+        async toggleAvailability(row) {
+            const available = !Number(row.is_available)
+            if (!window.confirm(available ? 'Aktifkan kembali penjualan buku ini?' : 'Tarik buku dari penjualan? Client yang sudah memiliki akses tetap dapat membaca.')) return
+            try {
+                const response = await window.axios.patch('/upload/book-management/' + encodeURIComponent(row.book_id) + '/availability', { is_available: available })
+                this.$notyf.success(response.data.message)
+                this.getData()
+            } catch (e) {
+                this.$notyf.error(e.response?.data?.message || e.message)
+            }
+        },
+
+        editPublished(row) {
+            this.revision = { ...row, sellprice: row.sellprice_raw, rentprice: row.rentprice_raw, retailprice: row.retailprice_raw }
+            this.form.data = false
+            this.form.revision = true
+            this.getCategory()
+            this.getPublisher()
+            this.getFormat()
+        },
+
+        cancelRevision() {
+            this.form.revision = false
+            this.form.data = true
+        },
+
+        async submitRevision() {
+            if (this.form.submitted) return
+            this.form.submitted = true
+            try {
+                const response = await window.axios.post('/upload/book-management/' + encodeURIComponent(this.revision.book_id) + '/revision', this.revision)
+                this.$notyf.success(response.data.message)
+                this.cancelRevision()
+                this.getData()
+            } catch (e) {
+                const errors = e.response?.data?.errors
+                if (errors) Object.values(errors).forEach((messages) => this.$notyf.error(messages.join(', ')))
+                else this.$notyf.error(e.response?.data?.message || e.message)
+            } finally {
+                this.form.submitted = false
+            }
+        },
+
         hideFilter() {
-            document.getElementById('filterDetails').removeAttribute('open')
+            document.getElementById('filterDetails')?.removeAttribute('open')
         },
 
         resetFilter() {
@@ -830,7 +943,7 @@ export default {
             if (this.isAllSelected) {
                 this.selectedRows = []
             } else {
-                this.selectedRows = this.paginatedData.map((row) => row)
+                this.selectedRows = this.paginatedData.filter((row) => row.status == '1' && row.is_available == null)
             }
         },
 
@@ -1124,21 +1237,30 @@ export default {
 
         submit() {
             if (!this.form.submitted) {
+                if (this.form.encrypt && !this.form.field.file_pdf) {
+                    this.$notyf.error('Pilih ZIP PDF buku terlebih dahulu.')
+                    return
+                }
                 this.form.submitted = true
 
                 this.$refs.form.validate().then((result) => {
                     if (result.valid) {
-                        this.form.submitted = false
-
-                        let loader = this.$loading.show()
                         if (this.form.encrypt) {
+                            this.uploadProgress = { active: true, processing: false, percent: 0 }
                             let form_data = new FormData()
                             Object.keys(this.form.field).forEach((value) => {
                                 form_data.append(value, this.form.field[value])
                             })
 
                             window.axios
-                                .post('/upload/encrypt-books?menu=' + this.$route.name, form_data)
+                                .post('/upload/encrypt-books?menu=' + this.$route.name, form_data, {
+                                    onUploadProgress: (event) => {
+                                        if (event.total) {
+                                            this.uploadProgress.percent = Math.min(100, Math.round((event.loaded * 100) / event.total))
+                                            this.uploadProgress.processing = event.loaded >= event.total
+                                        }
+                                    },
+                                })
                                 .then((response) => {
                                     if (response.data.error.length > 0) {
                                         response.data.error.forEach((element) => {
@@ -1150,11 +1272,12 @@ export default {
                                         this.encryptUpdate()
                                     }
 
-                                    loader.hide()
+                                    this.uploadProgress.active = false
+                                    this.form.submitted = false
                                 })
                                 .catch((e) => {
                                     this.form.submitted = false
-                                    loader.hide()
+                                    this.uploadProgress.active = false
 
                                     if (e.response && e.response.data && e.response.data.message) {
                                         this.$notyf.error(e.response.data.message)
@@ -1402,7 +1525,8 @@ export default {
 
     computed: {
         isAllSelected() {
-            return this.paginatedData.length > 0 && this.paginatedData.every((row) => this.selectedRows.includes(row))
+            const drafts = this.paginatedData.filter((row) => row.status == '1' && row.is_available == null)
+            return drafts.length > 0 && drafts.every((row) => this.selectedRows.includes(row))
         },
 
         filteredData() {

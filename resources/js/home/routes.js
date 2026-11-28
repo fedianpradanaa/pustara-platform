@@ -92,6 +92,12 @@ const routes = [
         meta: { roles: [0, 2] },
     },
     {
+        path: '/mapping-buku',
+        name: 'mapping_buku',
+        component: () => import('./components/BookMapping.vue'),
+        meta: { roles: [0] },
+    },
+    {
         path: '/data-paidoff',
         name: 'data_paidoff',
         component: () => import(/* webpackChunkName: "data_paidoff" */ './components/UploadPaidOff.vue'),

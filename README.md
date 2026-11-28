@@ -68,6 +68,14 @@ Supplier dan distributor dapat memilih **Lupa password?** di halaman masuk. Taut
 
 Kode referensi client harus cocok dengan `noref` perusahaan bertipe distributor (`tcompany.type = 2`) pada database deployment terkait. Distributor menentukan kode unik saat mendaftar dan memberikannya kepada client.
 
+## Mapping buku dan PO
+
+Admin platform dapat membuat mapping melalui **Data > Mapping Buku ke Client**. Client harus sudah disetujui; buku yang ditarik atau sedang direvisi tidak dapat dipilih. Nomor PO dibuat otomatis, tanggal PO mengikuti tanggal saat mapping dibuat, dan setiap buku memiliki jumlah copy.
+
+PO pembelian langsung berstatus Approved dan baru muncul di supplier setelah admin memilih **Approve Supplier** pada Data PO. Persentase supplier diisi admin (lebih dari 0 sampai 100). PO hibah langsung dikirim ke supplier dengan harga detail nol dan tidak memerlukan pelunasan. PO hibah lama yang masih menunggu persetujuan juga langsung dikirim saat disetujui; hibah lama yang sudah berstatus Approved dapat dikirim melalui **Kirim Hibah**. Data PO historis tidak diubah otomatis.
+
+Migrasi flag buku harus dijalankan pada database deployment sebelum memakai fitur ini. Untuk integrasi aplikasi client, katalog penjualan baru harus memeriksa `tbook.is_available = 1` dan `tbook.is_editing = 0`, sementara akses baca buku yang sudah dimiliki tetap berdasarkan mapping, tanpa menyaring kedua flag tersebut.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

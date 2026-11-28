@@ -91,6 +91,9 @@ class UploadBooksController extends Controller
                     'a.sellprice as sellprice', 
                     'a.rentprice as rentprice', 
                     'a.retailprice as retailprice', 
+                    'a.sellprice as sellprice_raw',
+                    'a.rentprice as rentprice_raw',
+                    'a.retailprice as retailprice_raw',
                     'a.city as city', 
                     'a.category_id as category_id', 
                     'b.category_desc as category_desc',
@@ -101,6 +104,8 @@ class UploadBooksController extends Controller
                     'a.status as status', 
                     'a.reason as reason', 
                     'a.createdate as createdate',
+                    'published.is_available as is_available',
+                    'published.is_editing as is_editing',
                 )
                 ->leftJoin('tcompany_category as b', function($join) {
 					$join->on('a.supplier_id', '=', 'b.client_id') 
@@ -110,6 +115,10 @@ class UploadBooksController extends Controller
 					$join->on('a.supplier_id', '=', 'c.client_id') 
 						->on('a.publisher_id', '=', 'c.id') ;
 				})
+                ->leftJoin('tbook as published', function ($join) {
+                    $join->on('a.book_id', '=', 'published.book_id')
+                        ->on('a.supplier_id', '=', 'published.supplier_id');
+                })
                 ->where('a.supplier_id', auth()->user()->client_id)
                 ->when(isset($status) && count($status) > 0, function($query) use ($status) {
                     $query->whereIn('a.status', $status);
@@ -689,6 +698,7 @@ class UploadBooksController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
+        $this->ensureUnpublishedDrafts(collect($request->all())->pluck('book_id')->all());
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
@@ -754,6 +764,7 @@ class UploadBooksController extends Controller
      */
     public function submitDraft(Request $request): JsonResponse
     {
+        $this->ensureUnpublishedDrafts(collect($request->all())->pluck('book_id')->all());
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
@@ -805,6 +816,7 @@ class UploadBooksController extends Controller
      */
     public function submitReview(Request $request): JsonResponse
     {
+        $this->ensureUnpublishedDrafts(collect($request->all())->pluck('book_id')->all());
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
@@ -936,6 +948,7 @@ class UploadBooksController extends Controller
         $results['data'] = [];
 
         $dataUpload  = json_decode($request['data'], true);
+        $this->ensureUnpublishedDrafts(collect($dataUpload)->pluck('book_id')->all());
 
         $bookId = [];
         foreach ($dataUpload as $key => $value) {
@@ -1169,5 +1182,20 @@ class UploadBooksController extends Controller
         }
 
         return '';
+    }
+
+    private function ensureUnpublishedDrafts(array $ids): void
+    {
+        abort_unless((int) auth()->user()->role === 1 && auth()->user()->client_id, 403);
+        $ids = array_values(array_unique(array_filter($ids)));
+        abort_if(!$ids, 422, 'Pilih setidaknya satu draft buku.');
+        $count = DB::table('tbook_draft')
+            ->whereIn('book_id', $ids)
+            ->where('supplier_id', auth()->user()->client_id)
+            ->where('status', '1')
+            ->whereNotExists(function ($query) {
+                $query->selectRaw('1')->from('tbook')->whereColumn('tbook.book_id', 'tbook_draft.book_id');
+            })->count();
+        abort_unless($count === count($ids), 409, 'Hanya draft yang belum pernah terbit yang dapat diproses melalui alur ini.');
     }
 }

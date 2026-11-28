@@ -55,7 +55,7 @@ class UploadPaidOffController extends Controller
                 )
                 ->join('tcompany as b', function($join) {
 					$join->on('a.supplier_id', '=', 'b.id')
-                        ->on('b.type', '=', DB::raw("'1'"));
+                        ->whereIn('b.type', ['1', '3']);
 				});
 
             $detail = DB::table('tpo_detail as a')->sharedLock()
@@ -155,7 +155,13 @@ class UploadPaidOffController extends Controller
      */
     public function store(UploadPaidOffRequest $request): JsonResponse
     {
+        abort_unless((string) $request->user()->role === '0', 403);
         $validated = $request->validated();
+        $request->validate(['client_id' => 'required|string', 'po_number' => 'required|string', 'po_date' => 'required|date']);
+        $order = DB::table('tpo_header')->where('client_id', $validated['client_id'])
+            ->where('po_number', $validated['po_number'])->where('po_date', $validated['po_date'])->first();
+        abort_unless($order, 404, 'PO tidak ditemukan.');
+        abort_if((string) $order->po_type === '2', 409, 'PO hibah tidak memerlukan pelunasan.');
 
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
@@ -246,7 +252,7 @@ class UploadPaidOffController extends Controller
                         )
                         ->join('tcompany as b', function($join) {
                             $join->on('a.supplier_id', '=', 'b.id')
-                                ->on('b.type', '=', DB::raw("'1'"));
+                                ->whereIn('b.type', ['1', '3']);
                         })
                         ->leftJoin('tpublisher as c', function($join) {
                             $join->on('a.supplier_id', '=', 'c.client_id') 

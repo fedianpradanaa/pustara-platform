@@ -42,6 +42,7 @@ class ReportPOController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        abort_unless((string) $request->user()->role === '1' && $request->user()->client_id, 403);
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
@@ -56,7 +57,7 @@ class ReportPOController extends Controller
                 )
                 ->join('tcompany as b', function($join) {
 					$join->on('a.supplier_id', '=', 'b.id')
-                        ->on('b.type', '=', DB::raw("'1'"));
+                        ->whereIn('b.type', ['1', '3']);
 				});
 
             $detail = DB::table('tpo_detail as a')->sharedLock()
@@ -169,6 +170,7 @@ class ReportPOController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        abort_unless((string) auth()->user()->role === '1' && auth()->user()->client_id, 403);
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
 
         if (request()->has('param') && request()->param != '') {
@@ -176,7 +178,7 @@ class ReportPOController extends Controller
                 case 'detail-po':
                     DB::enableQueryLog();
 
-                    $supplier = request()->supplier ?? '';
+                    $supplier = auth()->user()->client_id;
                     $ponumber = request()->ponumber ?? '';
                     $podate = request()->podate ?? '';
                     $client = request()->client ?? '';
@@ -189,7 +191,7 @@ class ReportPOController extends Controller
                         )
                         ->join('tcompany as b', function($join) {
                             $join->on('a.supplier_id', '=', 'b.id')
-                                ->on('b.type', '=', DB::raw("'1'"));
+                                ->whereIn('b.type', ['1', '3']);
                         })
                         ->leftJoin('tpublisher as c', function($join) {
                             $join->on('a.supplier_id', '=', 'c.client_id') 
@@ -222,6 +224,7 @@ class ReportPOController extends Controller
                         ->joinSub($tbook, 'c', function($join) {
                             $join->on('b.book_id', '=', 'c.book_id');
                         })
+                        ->whereIn('a.status', ['3', '4'])
                         ->when(isset($supplier) && $supplier != '', function($query) use ($supplier) {
                             $query->where('c.supplier_id', $supplier);
                         })

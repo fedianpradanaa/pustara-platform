@@ -231,6 +231,7 @@ class ApprovalBooksController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        abort_unless((int) $request->user()->role === 0, 403);
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
@@ -244,6 +245,7 @@ class ApprovalBooksController extends Controller
                 $movedFiles = [];
                 try {
                     $approve = DB::transaction(function () use ($value, &$movedFiles) {
+                        DB::table('tbook')->where('book_id', $value)->lockForUpdate()->first();
                         $draft = DB::table('tbook_draft as a')
                             ->select(
                                 'a.book_id as book_id',
@@ -267,7 +269,8 @@ class ApprovalBooksController extends Controller
                                 'a.book_format_id as book_format_id',
                                 'a.filename as filename',
                                 'a.cover as cover',
-                                'a.age as age'
+                                'a.age as age',
+                                'a.status as status'
                             )
                             ->where('book_id', $value)
                             ->lockForUpdate()
@@ -275,6 +278,9 @@ class ApprovalBooksController extends Controller
 
                         if (!$draft) {
                             throw new \RuntimeException('Book '.$value.' was not found.');
+                        }
+                        if ((string) $draft->status !== '2') {
+                            throw new \RuntimeException('Book '.$value.' is not awaiting approval.');
                         }
 
                         if (!$draft->filename || !$draft->cover) {
@@ -340,6 +346,7 @@ class ApprovalBooksController extends Controller
                             'filename' => $draft->filename,
                             'cover' => $draft->cover,
                             'age' => $draft->age,
+                            'is_editing' => false,
                             'createdate' => Carbon::now('Asia/Jakarta'),
                             'createby' => auth()->user()->email,
                             'updatedate' => Carbon::now('Asia/Jakarta'),
@@ -510,6 +517,7 @@ class ApprovalBooksController extends Controller
      */
     public function update(ApprovalBooksUpdateRequest $request, string $id): JsonResponse
     {
+        abort_unless((int) $request->user()->role === 0, 403);
         $validated = $request->validated();
         
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
@@ -522,6 +530,7 @@ class ApprovalBooksController extends Controller
 
             $update = DB::table('tbook_draft')
                 ->where('book_id', $request->book_id)
+                ->where('status', '2')
                 ->update([
                     'isbn' => $request->isbn,
                     'eisbn' => $request->eisbn,
@@ -636,6 +645,7 @@ class ApprovalBooksController extends Controller
      */
     public function reject(Request $request): JsonResponse
     {
+        abort_unless((int) $request->user()->role === 0, 403);
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 
@@ -647,6 +657,7 @@ class ApprovalBooksController extends Controller
             foreach (request()->request->all() as $key => $value) {
                 $reject = DB::table('tbook_draft')
                     ->where('book_id', $value)
+                    ->where('status', '2')
                     ->update([
                         'status' => '5',
                         'updatedate' => Carbon::now('Asia/Jakarta'),

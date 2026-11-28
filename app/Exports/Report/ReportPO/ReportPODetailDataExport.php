@@ -149,7 +149,7 @@ class ReportPODetailDataExport implements WithCustomStartCell, WithEvents
                     )
                     ->join('tcompany as b', function($join) {
                         $join->on('a.supplier_id', '=', 'b.id')
-                            ->on('b.type', '=', DB::raw("'1'"));
+                            ->whereIn('b.type', ['1', '3']);
                     })
                     ->leftJoin('tpublisher as c', function($join) {
                         $join->on('a.supplier_id', '=', 'c.client_id') 

@@ -137,6 +137,12 @@
                     </li>
 
                     <li>
+                        <router-link :to="{ name: 'mapping_buku' }" class="group flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="size-5 stroke-svg-icon-color"><path stroke-linecap="round" stroke-linejoin="round" d="m16.49 12 3.75 3.75m0 0-3.75 3.75m3.75-3.75H3.74V4.499" /></svg>
+                            Mapping Buku ke Client
+                        </router-link>
+                    </li>
+                    <li>
                         <router-link :to="{ name: 'data_po' }" class="group flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 hover:text-gray-700">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="" class="size-5 stroke-svg-icon-color">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m16.49 12 3.75 3.75m0 0-3.75 3.75m3.75-3.75H3.74V4.499" />

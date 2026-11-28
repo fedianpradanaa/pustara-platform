@@ -112,7 +112,7 @@
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ms-1 me-1.5 size-4">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                                                             </svg>
-                                                            <p class="whitespace-nowrap text-sm">Belum Lunas</p>
+                                                            <p class="whitespace-nowrap text-sm">{{ row['po_type'] == '2' ? 'Hibah dikirim' : 'Belum Lunas' }}</p>
                                                         </span>
                                                         <span v-if="row['status'] == '4'" class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700">
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-ms-1 me-1.5 size-4">
@@ -126,7 +126,7 @@
                                                     <td class="whitespace-nowrap border-b border-gray-200 px-4 py-2 text-right">{{ row['persentase_supplier'] }} %</td>
                                                     <td class="flex justify-start gap-2 whitespace-nowrap border-b border-gray-200 px-4 py-2">
                                                         <a href="javascript:void(0);" class="download-link inline-block rounded border border-emerald-600 bg-emerald-600 px-3 py-1 text-sm font-medium text-white hover:bg-transparent hover:text-emerald-600 focus:outline-none focus:ring active:text-emerald-500" @click="getDetail(row)">Detail</a>
-                                                        <a v-if="row['status'] != '4'" href="javascript:void(0);" class="download-link inline-block rounded border border-sky-600 bg-sky-600 px-3 py-1 text-sm font-medium text-white hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-sky-500" @click="onUpload(row)">Upload</a>
+                                                        <a v-if="row['po_type'] == '1' && row['status'] != '4'" href="javascript:void(0);" class="download-link inline-block rounded border border-sky-600 bg-sky-600 px-3 py-1 text-sm font-medium text-white hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-sky-500" @click="onUpload(row)">Upload</a>
                                                         <a v-if="row['payment_image'] != ''" href="javascript:void(0);" class="download-link inline-block rounded border border-teal-600 bg-teal-600 px-3 py-1 text-sm font-medium text-white hover:bg-transparent hover:text-teal-600 focus:outline-none focus:ring active:text-teal-500" @click="showImages(row['payment_image'])">Lihat</a>
                                                     </td>
                                                 </tr>

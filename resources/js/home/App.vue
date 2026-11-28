@@ -13,7 +13,7 @@
             </svg>
         </button>
 
-        <div class="flex items-center gap-3">
+        <div class="ml-auto flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
@@ -28,7 +28,7 @@
                     :aria-expanded="profileMenuOpen"
                     @click="profileMenuOpen = !profileMenuOpen"
                 >
-                    <img :src="'/' + $brand.favicon_path" :alt="$brand.name" class="h-9 w-9 rounded-xl bg-white object-contain p-1" />
+                    <span aria-hidden="true" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-700 text-sm font-bold text-white">{{ userInitials }}</span>
                     <span class="text-left leading-tight">
                         <span class="block max-w-32 truncate text-sm font-bold">{{ user.name || 'Akun' }}</span>
                         <span class="block text-[11px] font-medium text-blue-700">Akun &amp; keluar</span>
@@ -113,6 +113,11 @@ export default {
     },
 
     computed: {
+        userInitials() {
+            const names = (this.user.name || '').trim().split(/\s+/).filter(Boolean)
+            if (!names.length) return '?'
+            return (names.length === 1 ? Array.from(names[0])[0] : Array.from(names[0])[0] + Array.from(names[names.length - 1])[0]).toLocaleUpperCase()
+        },
         currentComponent() {
             return this.user.role === 0 ? 'MenuAdmin' : this.user.role === 1 ? 'MenuSupplier' : 'MenuDistributor'
         },

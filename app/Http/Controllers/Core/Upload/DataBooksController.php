@@ -772,6 +772,15 @@ class DataBooksController extends Controller
      */
     public function submitDraft(Request $request): JsonResponse
     {
+        $bookIds = collect($request->input('0', []))->where('type', 'B')->pluck('bookId')->unique()->values();
+        if ($bookIds->isNotEmpty()) {
+            $eligible = DB::table('tbook_draft')->whereIn('book_id', $bookIds)
+                ->where('supplier_id', $request->user()->client_id)->where('status', '1')
+                ->whereNotExists(function ($query) {
+                    $query->selectRaw('1')->from('tbook')->whereColumn('tbook.book_id', 'tbook_draft.book_id');
+                })->count();
+            abort_unless($eligible === $bookIds->count(), 409, 'Buku terbit harus diubah melalui pengajuan perubahan.');
+        }
         $logs = new Logs(Arr::last(explode("\\", get_class())) . 'Log');
         $logs->write(__FUNCTION__, 'START');
 

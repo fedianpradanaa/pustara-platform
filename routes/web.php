@@ -50,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             });
 
             Route::prefix('upload')->namespace('Upload')->group(function() {
+                Route::patch('book-management/{id}/availability', 'BookManagementController@availability');
+                Route::post('book-management/{id}/revision', 'BookManagementController@revise');
+                Route::delete('book-management/{id}', 'BookManagementController@destroy');
                 Route::apiResource('encrypt-books', UploadBooksController::class);
                 Route::get('encrypt-books-cover/{location}/{filename}', [
                     \App\Http\Controllers\Core\Upload\UploadBooksController::class,
@@ -122,6 +125,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             });
 
             Route::prefix('transactions')->namespace('Transactions')->group(function() {
+                Route::get('book-mapping', 'BookMappingController@index');
+                Route::post('book-mapping', 'BookMappingController@store');
                 Route::apiResource('approval-books', ApprovalBooksController::class);
                 Route::prefix('approval-books')->group(function() {
                     Route::post('reject', 'ApprovalBooksController@reject');
